@@ -1,0 +1,24 @@
+{
+  "name": "media",
+  "version": "1.0.0",
+  "description": "media sync (manga, manhwa, anime, ...)",
+  "keywords": [
+    "manga"
+  ],
+  "license": "MIT",
+  "author": "HirooHG",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "start": "node src/main.js"
+  },
+  "dependencies": {
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "mongodb": "^6.20.0",
+    "node-html-parser": "^7.0.1",
+    "prettier": "^3.6.2"
+  }
+}
