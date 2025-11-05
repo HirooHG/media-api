@@ -1,14 +1,19 @@
 const express = require('express');
 
-const {getAllMedias, updateFollows, updateComicChapter} = require('./comick/application/comick');
+const {
+  getAllComics,
+  getAndSaveComicImage,
+  getComickComicChapter,
+  refreshComickFollows,
+} = require('./comick/features/features');
 
 const router = express.Router();
 
 router.get('/', async (_, res) => {
-  const follows = await getAllMedias();
+  const follows = await getAllComics();
   res.status(200).json({
-    status: true,
     data: follows,
+    error: null,
   });
 });
 
@@ -16,31 +21,85 @@ router.post('/refresh/comic', async (_, res) => {
   let status = 204;
 
   try {
-    await updateFollows();
+    await refreshComickFollows();
   } catch (e) {
+    console.error(e);
     status = 500;
   }
 
   res.status(status).send();
 });
 
-router.post('/refresh/:id/chapters', async (req, res) => {
-  let status = 204;
+router.post('/:id/chapters', async (req, res) => {
+  let status = 200;
+  let result = null;
+  let error = null;
 
-  const id = req.params['id'];
+  const {id} = req.params;
 
-  if (!id || isNaN(id)) {
-    res.status(400).send({status: false, msg: 'Param id mandatory and a number'});
+  if (!id || isNaN(Number(id))) {
+    res.status(400).send({
+      status: false,
+      data: null,
+      error: 'Param id mandatory and a number',
+    });
     return;
   }
 
+  const comic_id = Number(id);
+
   try {
-    await updateComicChapter();
+    const chapters = await getComickComicChapter(comic_id);
+    if (chapters.error) {
+      status = chapters.status;
+      error = chapters.error;
+    } else result = chapters;
   } catch (e) {
+    console.error(e);
     status = 500;
   }
 
-  res.status(status).send();
+  res.status(status).send({
+    data: result,
+    error,
+  });
+});
+
+router.post('/comic/image/:id', async (req, res) => {
+  let status = 200;
+  let result = null;
+  let error = null;
+
+  const {id} = req.params;
+
+  if (!id || isNaN(Number(id))) {
+    res.status(400).send({
+      status: false,
+      data: null,
+      error: 'Param id mandatory and a number',
+    });
+    return;
+  }
+
+  const comic_id = Number(id);
+
+  try {
+    const res = await getAndSaveComicImage(comic_id);
+    if (res.error) {
+      error = res.error;
+      status = res.status;
+    } else {
+      result = res;
+    }
+  } catch (e) {
+    console.error(e);
+    status = 500;
+  }
+
+  res.status(status).send({
+    data: result,
+    error,
+  });
 });
 
 module.exports = router;
