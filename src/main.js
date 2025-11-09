@@ -5,6 +5,8 @@ const compression = require('compression');
 
 const {initClient, closeClient} = require('./medias/comick/model/db');
 
+const env = process.env.NODE_ENV ?? 'dev';
+
 const port = 3000;
 const corsOpts = {
   origin: 'https://api.hugo-golliet.dev',
@@ -15,7 +17,9 @@ const mediasRouter = require('./medias/router');
 const app = express();
 
 app.use(compression());
-app.use(helmet());
+app.use(
+  helmet({crossOriginResourcePolicy: {policy: env === 'production' ? 'same-origin' : 'same-site'}}),
+);
 app.use(cors(corsOpts));
 app.use(express.static('public'));
 app.disable('x-powered-by');

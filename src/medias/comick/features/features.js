@@ -47,9 +47,6 @@ const getAllComics = async () => {
 // Home page
 // press button refresh to update current list
 const refreshComickFollows = async () => {
-  const creds = await getAuth({domain: domain_ext});
-  if (creds === null) return {error: "Couldn't retrive credentials", status: 500};
-
   const [em, m] = await Promise.all([getMedias(), getComickFollows()]);
 
   const nem = m.filter((me) => !em.some((eme) => me.comic_id === eme.comic_id));
