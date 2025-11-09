@@ -9,8 +9,21 @@ const {
 
 const router = express.Router();
 
-router.get('/', async (_, res) => {
-  const follows = await getAllComics();
+router.get('/', async (req, res) => {
+  let {page, per_page} = req.query;
+
+  if ((page && isNaN(Number(page))) || (per_page && isNaN(Number(per_page)))) {
+    res.status(400).json({
+      error: 'Page or per page query parameter is not a number',
+    });
+    return;
+  }
+
+  page = Number(page);
+  per_page = Number(per_page);
+
+  const follows = await getAllComics(page, per_page);
+
   res.status(200).json({
     data: follows,
     error: null,

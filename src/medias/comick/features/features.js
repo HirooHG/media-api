@@ -40,8 +40,8 @@ const getAndSaveComicImage = async (id) => {
 
 // Home page
 // get list of media
-const getAllComics = async () => {
-  return await getMedias();
+const getAllComics = async (page, per_page) => {
+  return await getMedias(undefined, per_page, page);
 };
 
 // Home page

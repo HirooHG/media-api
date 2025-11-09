@@ -12,8 +12,11 @@ const medias = db.collection('media');
 const chapters = db.collection('chapters');
 
 /// Medias
-const getMedias = async (doc) => {
-  return await medias.find(doc).toArray();
+const getMedias = async (doc, per_page, page = 1) => {
+  let ms = medias.find(doc).skip((per_page ?? 0) * (page - 1));
+  if (per_page) ms = ms.limit(per_page);
+
+  return await ms.toArray();
 };
 
 const getMedia = async (doc) => {
