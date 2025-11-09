@@ -3,3 +3,5 @@ public/images
 
 *.mongodb.js
 .DS_Store
+
+.env

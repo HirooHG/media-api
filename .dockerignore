@@ -1,0 +1,4 @@
+.git/
+media-req/
+node_modules/
+unset-image.mongodb.js
