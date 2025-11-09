@@ -6,10 +6,11 @@ const compression = require('compression');
 const {initClient, closeClient} = require('./medias/comick/model/db');
 
 const env = process.env.NODE_ENV ?? 'dev';
+const origin = process.env.HOST ?? '*';
 
-const port = 3000;
+const port = 3001;
 const corsOpts = {
-  origin: 'https://api.hugo-golliet.dev',
+  origin,
   optionsSuccessStatus: 200,
 };
 const mediasRouter = require('./medias/router');
