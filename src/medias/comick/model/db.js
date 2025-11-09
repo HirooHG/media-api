@@ -3,7 +3,9 @@
 
 const {MongoClient} = require('mongodb');
 
-const client = new MongoClient('mongodb://localhost:27017');
+const DB_HOST = process.env.DB_HOST ?? 'localhost';
+
+const client = new MongoClient('mongodb://' + DB_HOST + ':27017');
 const db = client.db('manga');
 const auth = db.collection('auth');
 const medias = db.collection('media');
