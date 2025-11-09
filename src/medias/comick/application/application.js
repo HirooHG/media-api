@@ -7,7 +7,7 @@ const fs = require('fs');
 const {cfetch, ifetch} = require('./requests');
 const {getAuth} = require('../model/db');
 
-const {DOMAIN_EXT, DOMAIN, API_URI} = require('./constants');
+const {DOMAIN_EXT, DOMAIN, API_URI} = require('../constants');
 
 const getComickFollows = async () => {
   const m = [];

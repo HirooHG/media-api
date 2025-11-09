@@ -4,16 +4,16 @@ const cors = require('cors');
 const compression = require('compression');
 
 const {initClient, closeClient} = require('./medias/comick/model/db');
+const mediasRouter = require('./medias/router');
 
 const env = process.env.NODE_ENV ?? 'dev';
-const origin = process.env.HOST ?? '*';
+const origin = process.env.ORIGIN ?? '*';
 
-const port = 3001;
+const port = process.env.PORT ?? '3001';
 const corsOpts = {
   origin,
   optionsSuccessStatus: 200,
 };
-const mediasRouter = require('./medias/router');
 
 const app = express();
 

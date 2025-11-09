@@ -1,4 +1,4 @@
-const {DOMAIN_EXT, DOMAIN, API_URI} = require('./constants');
+const {DOMAIN} = require('../constants');
 
 const ifetch = async (uri) => {
   return await fetch(uri, {
