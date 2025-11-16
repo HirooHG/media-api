@@ -12,8 +12,11 @@ const medias = db.collection('media');
 const chapters = db.collection('chapters');
 
 /// Medias
-const getMedias = async (doc, per_page, page = 1) => {
-  let ms = medias.find(doc).skip((per_page ?? 0) * (page - 1));
+const getMedias = async (doc, proj, per_page, page = 1) => {
+  let ms = medias
+    .find(doc)
+    .project(proj)
+    .skip((per_page ?? 0) * (page - 1));
   if (per_page) ms = ms.limit(per_page);
 
   return await ms.toArray();
@@ -39,6 +42,10 @@ const setMediaProp = async (id, prop, data) => {
   const obj = {};
   obj[prop] = data;
   return (await medias.updateOne({comic_id: id}, {$set: obj})).upsertedCount;
+};
+
+const setMedia = async (id, obj) => {
+  return await medias.findOneAndReplace({comic_id: id}, obj);
 };
 
 /// Chapters
@@ -68,6 +75,7 @@ module.exports = {
   getMediaById,
   insertManyMedias,
   setMediaProp,
+  setMedia,
   // chapters
   insertManyChapters,
   getMediaChapters,

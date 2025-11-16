@@ -7,6 +7,7 @@ const {
   saveComicImage,
   getComickFollows,
   getComickComicChapters,
+  getComickComicDetails,
 } = require('../application/application');
 
 const {
@@ -14,20 +15,22 @@ const {
   getMediaById,
   getMedias,
   setMediaProp,
-  getAuth,
+  setMedia,
   insertManyChapters,
   insertManyMedias,
   getMediaChapters,
 } = require('../model/db');
 
+const {selectComicDetailsProps} = require('./utils');
+
 // Home page
 // if image in shimmer
 // press button to fetch image from comick
-const getAndSaveComicImage = async (id) => {
+const getComicImage = async (id) => {
   const m = await getMediaById(id);
 
   if (m === null) return {error: 'Media not found', status: 404};
-  if (m.image) return {error: 'Image already existing', status: 400};
+  if (m.image) return m.image;
 
   const b = await getComickComicImage(m.default_thumbnail);
   const {status, image} = await saveComicImage(b, m.comic_id);
@@ -41,7 +44,36 @@ const getAndSaveComicImage = async (id) => {
 // Home page
 // get list of media
 const getAllComics = async (page, per_page) => {
-  return await getMedias(undefined, per_page, page);
+  return await getMedias(undefined, {_id: 0, id: 0}, per_page, page);
+};
+
+// Comic page
+// get details of media
+const getComic = async (comic_id) => {
+  const comic = await getMedia({comic_id});
+  if (comic === null) return {error: "Couldn't find the comic", status: 404};
+  if (comic.detailled) return comic;
+
+  const comicDetails = await getComickComicDetails(comic.comic_slug);
+  const props = selectComicDetailsProps(comicDetails);
+  const newComic = {
+    ...comic,
+    ...props,
+  };
+
+  let desc = newComic.desc;
+  const i = newComic.desc.indexOf('\n');
+  if (i) {
+    desc = desc.slice(0, i);
+  }
+  newComic.desc = desc;
+  newComic.detailled = true;
+
+  const replacedComic = await setMedia(comic_id, newComic);
+  // risked to send _id
+  replacedComic._id = null;
+
+  return replacedComic;
 };
 
 // Home page
@@ -77,8 +109,9 @@ const getComickComicChapter = async (id) => {
 };
 
 module.exports = {
-  getAndSaveComicImage,
+  getComicImage,
   getAllComics,
+  getComic,
   refreshComickFollows,
   getComickComicChapter,
 };

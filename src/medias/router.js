@@ -2,15 +2,16 @@ const express = require('express');
 
 const {
   getAllComics,
-  getAndSaveComicImage,
+  getComicImage,
   getComickComicChapter,
   refreshComickFollows,
+  getComic,
 } = require('./comick/features/features');
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  let {page, per_page} = req.query;
+  const {page, per_page} = req.query;
 
   if ((page && isNaN(Number(page))) || (per_page && isNaN(Number(per_page)))) {
     res.status(400).json({
@@ -19,14 +20,49 @@ router.get('/', async (req, res) => {
     return;
   }
 
-  page = Number(page);
-  per_page = Number(per_page);
+  const p = Number(page);
+  const pp = Number(per_page);
 
-  const follows = await getAllComics(page, per_page);
+  const follows = await getAllComics(p, pp);
 
   res.status(200).json({
     data: follows,
     error: null,
+  });
+});
+
+router.get('/comic/:id', async (req, res) => {
+  let status = 200;
+  let result = null;
+  let error = null;
+
+  const {id} = req.params;
+
+  if (!id || isNaN(Number(id))) {
+    res.status(400).send({
+      status: false,
+      data: null,
+      error: 'Param id mandatory and a number',
+    });
+    return;
+  }
+
+  const comic_id = Number(id);
+
+  try {
+    const comic = await getComic(comic_id);
+    if (comic.error) {
+      status = comic.status;
+      error = comic.error;
+    } else result = comic;
+  } catch (e) {
+    console.error(e);
+    status = 500;
+  }
+
+  res.status(status).send({
+    data: result,
+    error,
   });
 });
 
@@ -97,7 +133,7 @@ router.post('/comic/image/:id', async (req, res) => {
   const comic_id = Number(id);
 
   try {
-    const res = await getAndSaveComicImage(comic_id);
+    const res = await getComicImage(comic_id);
     if (res.error) {
       error = res.error;
       status = res.status;

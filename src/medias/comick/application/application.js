@@ -53,6 +53,16 @@ const getComickComicChapters = async (slug) => {
   return cs;
 };
 
+const getComickComicDetails = async (slug) => {
+  const {token} = await getAuth({domain: DOMAIN_EXT});
+  const u = DOMAIN + '/comic/' + slug;
+  const t = await (await cfetch(token, u)).text();
+  const d = parse(t);
+  const dt = d.getElementById('comic-data').innerText.trim();
+  const da = JSON.parse(dt);
+  return da;
+};
+
 const getChapterDetails = async (slug, chapter) => {
   const {token} = await getAuth({domain: DOMAIN_EXT});
   const u = DOMAIN + '/comic/' + slug + '/' + chapter.hid + '-chapter-' + chapter.chap + '-en';
@@ -95,6 +105,7 @@ module.exports = {
   getComickFollows,
   getComickComicImage,
   getChapterDetails,
+  getComickComicDetails,
   getComickComicChapters,
   saveComicImage,
 };
