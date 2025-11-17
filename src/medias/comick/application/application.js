@@ -9,6 +9,8 @@ const {getAuth} = require('../model/db');
 
 const {DOMAIN_EXT, DOMAIN, API_URI} = require('../constants');
 
+const COMICK_ERROR = 'Error with fetch comick, renew the token maybe';
+
 const getComickFollows = async () => {
   const m = [];
   const {identity, token} = await getAuth({domain: DOMAIN_EXT});
@@ -19,6 +21,9 @@ const getComickFollows = async () => {
     identity +
     '/follows?order_by=updated_at&order_direction=desc&page=1&per_page=100';
   const f = await cfetch(token, u);
+  if (!f.ok) {
+    throw Error(COMICK_ERROR);
+  }
   const j = await f.json();
   m.push(...j.data);
 
@@ -42,7 +47,12 @@ const getComickComicChapters = async (slug) => {
   const {token} = await getAuth({domain: DOMAIN_EXT});
   const bu = API_URI + '/comics/' + slug + '/chapter-list?lang=en&page=';
   const cs = [];
-  const ch = await (await cfetch(token, bu + 1)).json();
+  const res = await cfetch(token, bu + 1);
+  if (!res.ok) {
+    throw Error(COMICK_ERROR);
+  }
+
+  const ch = await res.json();
   cs.push(...ch.data);
 
   for (let i = 2; i <= ch.last_page; i++) {
@@ -56,7 +66,11 @@ const getComickComicChapters = async (slug) => {
 const getComickComicDetails = async (slug) => {
   const {token} = await getAuth({domain: DOMAIN_EXT});
   const u = DOMAIN + '/comic/' + slug;
-  const t = await (await cfetch(token, u)).text();
+  const res = await cfetch(token, u);
+  if (!res.ok) {
+    throw Error(COMICK_ERROR);
+  }
+  const t = await res.text();
   const d = parse(t);
   const dt = d.getElementById('comic-data').innerText.trim();
   const da = JSON.parse(dt);
@@ -66,7 +80,11 @@ const getComickComicDetails = async (slug) => {
 const getChapterDetails = async (slug, chapter) => {
   const {token} = await getAuth({domain: DOMAIN_EXT});
   const u = DOMAIN + '/comic/' + slug + '/' + chapter.hid + '-chapter-' + chapter.chap + '-en';
-  const t = await (await cfetch(token, u)).text();
+  const res = await cfetch(token, u);
+  if (!res.ok) {
+    throw Error(COMICK_ERROR);
+  }
+  const t = await res.text();
   const d = parse(t);
   const dt = d.getElementById('sv-data').innerText.trim();
   const da = JSON.parse(dt);
@@ -75,6 +93,9 @@ const getChapterDetails = async (slug, chapter) => {
 
 const getComickComicImage = async (uri) => {
   const i = await ifetch(uri);
+  if (!i.ok) {
+    throw Error(COMICK_ERROR);
+  }
   return await i.blob();
 };
 
