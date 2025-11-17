@@ -66,13 +66,48 @@ router.get('/comic/:id', async (req, res) => {
   });
 });
 
+router.get('/refresh', async (req, res) => {
+  let status = 200;
+  let error = null;
+  let result = null;
+
+  const {page, per_page} = req.query;
+
+  if ((page && isNaN(Number(page))) || (per_page && isNaN(Number(per_page)))) {
+    res.status(400).json({
+      error: 'Page or per page query parameter is not a number',
+    });
+    return;
+  }
+
+  const p = Number(page);
+  const pp = Number(per_page);
+
+  try {
+    const comics = await refreshComickFollows(p, pp);
+    console.log(comics);
+
+    if (comics.error) {
+      status = comics.status;
+      error = comics.error;
+    } else result = comics;
+  } catch (e) {
+    console.error(e);
+    status = 500;
+  }
+
+  res.status(status).send({
+    data: result,
+    error,
+  });
+});
+
 router.post('/refresh/comic', async (_, res) => {
   let status = 204;
 
   try {
-    await refreshComickFollows();
+    // TODO: refresh comic details
   } catch (e) {
-    console.error(e);
     status = 500;
   }
 

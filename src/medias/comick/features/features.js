@@ -61,12 +61,6 @@ const getComic = async (comic_id) => {
     ...props,
   };
 
-  let desc = newComic.desc;
-  const i = newComic.desc.indexOf('\n');
-  if (i) {
-    desc = desc.slice(0, i);
-  }
-  newComic.desc = desc;
   newComic.detailled = true;
 
   const replacedComic = await setMedia(comic_id, newComic);
@@ -78,7 +72,7 @@ const getComic = async (comic_id) => {
 
 // Home page
 // press button refresh to update current list
-const refreshComickFollows = async () => {
+const refreshComickFollows = async (page, per_page) => {
   const [em, m] = await Promise.all([getMedias(), getComickFollows()]);
 
   const nem = m.filter((me) => !em.some((eme) => me.comic_id === eme.comic_id));
@@ -88,6 +82,8 @@ const refreshComickFollows = async () => {
   const c = await insertManyMedias(nem);
   if (c !== nem.length)
     return {error: 'Inserted ' + c + ' comic, expected ' + nem.length, status: 500};
+
+  return await getAllComics(page, per_page);
 };
 
 // Chapter page
