@@ -85,8 +85,6 @@ router.get('/refresh', async (req, res) => {
 
   try {
     const comics = await refreshComickFollows(p, pp);
-    console.log(comics);
-
     if (comics.error) {
       status = comics.status;
       error = comics.error;

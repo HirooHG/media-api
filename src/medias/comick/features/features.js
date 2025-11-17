@@ -77,7 +77,7 @@ const refreshComickFollows = async (page, per_page) => {
 
   const nem = m.filter((me) => !em.some((eme) => me.comic_id === eme.comic_id));
 
-  if (nem.length === 0) return;
+  if (nem.length === 0) return em;
 
   const c = await insertManyMedias(nem);
   if (c !== nem.length)

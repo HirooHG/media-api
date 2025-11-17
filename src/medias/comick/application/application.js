@@ -116,7 +116,6 @@ const saveComicImage = async (blob, id) => {
     await pr;
     res = true;
   } catch (e) {
-    console.log(e);
     res = false;
   }
   return {status: res, image: u};
