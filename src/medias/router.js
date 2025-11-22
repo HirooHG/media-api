@@ -12,6 +12,9 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   const {page, per_page} = req.query;
+  let result = null;
+  let error = null;
+  let status = 200;
 
   if ((page && isNaN(Number(page))) || (per_page && isNaN(Number(per_page)))) {
     res.status(400).json({
@@ -23,11 +26,21 @@ router.get('/', async (req, res) => {
   const p = Number(page);
   const pp = Number(per_page);
 
-  const follows = await getAllComics(p, pp);
+  try {
+    const res = await getAllComics(p, pp);
+    if (res.error) {
+      status = 400;
+      error = result.error;
+    } else result = res;
+  } catch (e) {
+    console.error(e);
+    status = 500;
+    error = "Couldn't load comics";
+  }
 
-  res.status(200).json({
-    data: follows,
-    error: null,
+  res.status(status).json({
+    data: result,
+    error,
   });
 });
 
@@ -58,6 +71,7 @@ router.get('/comic/:id', async (req, res) => {
   } catch (e) {
     console.error(e);
     status = 500;
+    error = "Couldn't load comic " + id;
   }
 
   res.status(status).send({
@@ -92,6 +106,7 @@ router.get('/refresh', async (req, res) => {
   } catch (e) {
     console.error(e);
     status = 500;
+    error = "Couldn't refresh comics";
   }
 
   res.status(status).send({
@@ -100,13 +115,17 @@ router.get('/refresh', async (req, res) => {
   });
 });
 
-router.post('/refresh/comic', async (_, res) => {
+router.post('/refresh/comic/:id', async (req, res) => {
   let status = 204;
+
+  const {id} = req.params;
 
   try {
     // TODO: refresh comic details
   } catch (e) {
+    console.error(e);
     status = 500;
+    error = "Couldn't refresh comic " + id;
   }
 
   res.status(status).send();
@@ -139,6 +158,7 @@ router.post('/:id/chapters', async (req, res) => {
   } catch (e) {
     console.error(e);
     status = 500;
+    error = "Couldn't load chapters";
   }
 
   res.status(status).send({
@@ -176,6 +196,7 @@ router.post('/comic/image/:id', async (req, res) => {
   } catch (e) {
     console.error(e);
     status = 500;
+    error = "Couldn't load comic image " + id;
   }
 
   res.status(status).send({
