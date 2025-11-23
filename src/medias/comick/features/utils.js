@@ -1,3 +1,12 @@
+const getObj = (fields, obj) => {
+  const obs = {};
+  fields.forEach((f) => {
+    obs[f] = obj[f];
+  });
+
+  return obs;
+};
+
 const selectComicDetailsProps = (comic) => {
   const fields = [
     'hid',
@@ -9,15 +18,27 @@ const selectComicDetailsProps = (comic) => {
     'desc',
     'content_rating',
   ];
+  return getObj(fields, obj);
+};
 
-  const obs = {};
-  fields.forEach((f) => {
-    obs[f] = comic[f];
+const selectComicChapterProps = (chapter) => {
+  const fields = ['id', 'hid', 'chap', 'title', 'vol', 'is_the_last_chapter'];
+
+  return getObj(fields, chapter);
+};
+
+const selectComicChapterDetailsProps = (images) => {
+  const fields = ['name', 'url'];
+
+  const props = images.map((i) => {
+    return getObj(fields, i);
   });
 
-  return obs;
+  return props;
 };
 
 module.exports = {
   selectComicDetailsProps,
+  selectComicChapterProps,
+  selectComicChapterDetailsProps,
 };

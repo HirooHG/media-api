@@ -1,0 +1,16 @@
+meta {
+  name: chapter
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{API_URI}}/media/comic/:comic_id/chapter/:chapter_id
+  body: none
+  auth: none
+}
+
+params:path {
+  chapter_id:
+  comic_id:
+}

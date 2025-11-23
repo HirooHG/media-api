@@ -77,7 +77,7 @@ const getComickComicDetails = async (slug) => {
   return da;
 };
 
-const getChapterDetails = async (slug, chapter) => {
+const getComickComicChapterDetails = async (slug, chapter) => {
   const {token} = await getAuth({domain: DOMAIN_EXT});
   const u = DOMAIN + '/comic/' + slug + '/' + chapter.hid + '-chapter-' + chapter.chap + '-en';
   const res = await cfetch(token, u);
@@ -91,7 +91,7 @@ const getChapterDetails = async (slug, chapter) => {
   return da.chapter;
 };
 
-const getComickComicImage = async (uri) => {
+const getComickImage = async (uri) => {
   const i = await ifetch(uri);
   if (!i.ok) {
     throw Error(COMICK_ERROR);
@@ -99,14 +99,14 @@ const getComickComicImage = async (uri) => {
   return await i.blob();
 };
 
-const saveComicImage = async (blob, id) => {
+const saveImage = async (blob, id, uri) => {
   const e = blob.type.split('/')[1];
   const f = new File([blob], id + '.' + e);
   const by = await f.bytes();
   const u = id + '.' + e;
 
   const pr = new Promise((resolve, rejects) => {
-    fs.writeFile('./public/images/' + u, by, () => {
+    fs.writeFile(uri + u, by, () => {
       rejects();
     });
     resolve();
@@ -121,11 +121,18 @@ const saveComicImage = async (blob, id) => {
   return {status: res, image: u};
 };
 
+const createDir = (dir, recursive) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, {recursive});
+  }
+};
+
 module.exports = {
   getComickFollows,
-  getComickComicImage,
-  getChapterDetails,
+  getComickImage,
   getComickComicDetails,
   getComickComicChapters,
-  saveComicImage,
+  getComickComicChapterDetails,
+  saveImage,
+  createDir,
 };

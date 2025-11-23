@@ -3,9 +3,10 @@ const express = require('express');
 const {
   getAllComics,
   getComicImage,
-  getComickComicChapter,
+  getComicChapters,
   refreshComickFollows,
   getComic,
+  getComicChapterDetails,
 } = require('./comick/features/features');
 
 const router = express.Router();
@@ -131,7 +132,7 @@ router.post('/refresh/comic/:id', async (req, res) => {
   res.status(status).send();
 });
 
-router.post('/:id/chapters', async (req, res) => {
+router.get('/comic/:id/chapters', async (req, res) => {
   let status = 200;
   let result = null;
   let error = null;
@@ -150,7 +151,7 @@ router.post('/:id/chapters', async (req, res) => {
   const comic_id = Number(id);
 
   try {
-    const chapters = await getComickComicChapter(comic_id);
+    const chapters = await getComicChapters(comic_id);
     if (chapters.error) {
       status = chapters.status;
       error = chapters.error;
@@ -159,6 +160,43 @@ router.post('/:id/chapters', async (req, res) => {
     console.error(e);
     status = 500;
     error = "Couldn't load chapters";
+  }
+
+  res.status(status).send({
+    data: result,
+    error,
+  });
+});
+
+router.get('/comic/:comic_id/chapter/:chapter_id', async (req, res) => {
+  let status = 200;
+  let result = null;
+  let error = null;
+
+  const {comic_id, chapter_id} = req.params;
+
+  if (!comic_id || !chapter_id || isNaN(Number(comic_id)) || isNaN(Number(chapter_id))) {
+    res.status(400).send({
+      status: false,
+      data: null,
+      error: 'Param comic id or chapter id mandatory and a number',
+    });
+    return;
+  }
+
+  const parsedComicId = Number(comic_id);
+  const parsedChapterId = Number(chapter_id);
+
+  try {
+    const chapter = await getComicChapterDetails(parsedComicId, parsedChapterId);
+    if (chapter.error) {
+      status = chapter.status;
+      error = chapter.error;
+    } else result = chapter;
+  } catch (e) {
+    console.error(e);
+    status = 500;
+    error = "Couldn't load chapter";
   }
 
   res.status(status).send({

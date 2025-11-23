@@ -3,11 +3,14 @@
 /// ready to use functions for router
 
 const {
-  getComickComicImage,
+  getComickImage,
   saveComicImage,
   getComickFollows,
   getComickComicChapters,
   getComickComicDetails,
+  getComickComicChapterDetails,
+  saveImage,
+  createDir,
 } = require('../application/application');
 
 const {
@@ -19,11 +22,17 @@ const {
   insertManyChapters,
   insertManyMedias,
   getMediaChapters,
+  getMediaChapter,
+  setChapter,
 } = require('../model/db');
 
-const {selectComicDetailsProps} = require('./utils');
+const {
+  selectComicDetailsProps,
+  selectComicChapterDetailsProps,
+  selectComicChapterProps,
+} = require('./utils');
 
-// Home page
+// Home/Comic page
 // if image in shimmer
 // press button to fetch image from comick
 const getComicImage = async (id) => {
@@ -32,8 +41,8 @@ const getComicImage = async (id) => {
   if (m === null) return {error: 'Media not found', status: 404};
   if (m.image) return m.image;
 
-  const b = await getComickComicImage(m.default_thumbnail);
-  const {status, image} = await saveComicImage(b, m.comic_id);
+  const b = await getComickImage(m.default_thumbnail);
+  const {status, image} = await saveComicImage(b, m.comic_id, './public/images/');
   if (!status) return {error: "Couldn't save the image", status: 500};
 
   await setMediaProp(m.comic_id, 'image', image);
@@ -86,22 +95,68 @@ const refreshComickFollows = async (page, per_page) => {
   return await getAllComics(page, per_page);
 };
 
-// Chapter page
-// press refresh button to actualise the chapter info
-const getComickComicChapter = async (id) => {
+// Comic page
+// automatically get chapters when entering comic page
+const getComicChapters = async (id) => {
   const c = await getMedia({comic_id: id});
   if (c === null) return {error: "Couldn't find the comic", status: 404};
 
   const existingChapters = await getMediaChapters(c.comic_id);
-  if (existingChapters !== null) return existingChapters.chapters;
+  if (existingChapters.length !== 0) return existingChapters;
 
   const chs = await getComickComicChapters(c.comic_slug);
   if (chs.length === 0) return ch;
 
-  const co = await insertManyChapters(c.comic_id, chs);
-  if (!co) return {error: "Couldn't insert comic's chapters", status: 500};
+  const newChs = chs.map((cha) => {
+    const props = selectComicChapterProps(cha);
+    return {
+      comic_id: c.comic_id,
+      ...props,
+    };
+  });
+  const ak = await insertManyChapters(newChs);
+  if (!ak) return {error: "Couldn't insert comic's chapters", status: 500};
 
-  return chs;
+  return newChs;
+};
+
+// Chapter page
+// press refresh button to actualise the chapter info
+const getComicChapterDetails = async (comic_id, chapter_id) => {
+  const ch = await getMediaChapter(comic_id, chapter_id);
+  if (!ch || ch === null) return {error: "Couldn't find the chapter", status: 404};
+
+  const {comic_slug} = await getMedia({comic_id});
+  const chDetails = await getComickComicChapterDetails(comic_slug, ch);
+  if (!chDetails) return {error: "Couldn't fetch chapter details", status: 500};
+
+  const localUri = './public/images/' + comic_id + '/' + chDetails.id + '/';
+  createDir(localUri, true);
+
+  const imagesComick = selectComicChapterDetailsProps(chDetails.images);
+  const images = [];
+  for (const i in imagesComick) {
+    const {url, name} = imagesComick[i];
+    const im = await getComickImage(url);
+    const {status, image} = await saveImage(im, i, localUri);
+    if (!status)
+      return {
+        error:
+          "Couldn't save image " + name + ' from chapter ' + chDetails.id + ' of comic ' + comic_id,
+        status: 500,
+      };
+
+    images.push(image);
+  }
+
+  const newCh = {
+    ...ch,
+    images,
+  };
+  const chap = await setChapter(comic_id, chapter_id, newCh);
+  if (chap === null) return {error: "Couldn't persist chapter images", status: 500};
+
+  return newCh;
 };
 
 module.exports = {
@@ -109,5 +164,6 @@ module.exports = {
   getAllComics,
   getComic,
   refreshComickFollows,
-  getComickComicChapter,
+  getComicChapters,
+  getComicChapterDetails,
 };

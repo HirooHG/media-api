@@ -50,13 +50,28 @@ const setMedia = async (id, obj) => {
 
 /// Chapters
 const getMediaChapters = async (comic_id) => {
-  return await chapters.findOne({comic_id});
+  return await chapters.find({comic_id}).toArray();
 };
 
-const insertManyChapters = async (comic_id, chs) => {
-  return (await chapters.insertOne({comic_id, chapters: chs})).acknowledged;
+const getMediaChapter = async (comic_id, chapter_id) => {
+  return await chapters.findOne({id: chapter_id, comic_id});
 };
 
+const insertManyChapters = async (chs) => {
+  return (await chapters.insertMany(chs)).acknowledged;
+};
+
+const setChapterProp = async (id, prop, data) => {
+  const obj = {};
+  obj[prop] = data;
+  return (await chapters.updateOne({id}, {$set: obj})).upsertedCount;
+};
+
+const setChapter = async (comic_id, chapter_id, obj) => {
+  return await chapters.findOneAndReplace({comic_id, id: chapter_id}, obj);
+};
+
+/// Client
 const initClient = async () => {
   await client.connect();
 };
@@ -79,4 +94,7 @@ module.exports = {
   // chapters
   insertManyChapters,
   getMediaChapters,
+  getMediaChapter,
+  setChapterProp,
+  setChapter,
 };
