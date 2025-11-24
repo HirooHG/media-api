@@ -4,7 +4,6 @@
 
 const {
   getComickImage,
-  saveComicImage,
   getComickFollows,
   getComickComicChapters,
   getComickComicDetails,
@@ -42,7 +41,7 @@ const getComicImage = async (id) => {
   if (m.image) return m.image;
 
   const b = await getComickImage(m.default_thumbnail);
-  const {status, image} = await saveComicImage(b, m.comic_id, './public/images/');
+  const {status, image} = await saveImage(b, m.comic_id, './public/images/');
   if (!status) return {error: "Couldn't save the image", status: 500};
 
   await setMediaProp(m.comic_id, 'image', image);

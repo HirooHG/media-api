@@ -18,7 +18,7 @@ const selectComicDetailsProps = (comic) => {
     'desc',
     'content_rating',
   ];
-  return getObj(fields, obj);
+  return getObj(fields, comic);
 };
 
 const selectComicChapterProps = (chapter) => {
