@@ -117,22 +117,6 @@ router.get('/refresh', async (req, res) => {
   });
 });
 
-router.post('/refresh/comic/:id', async (req, res) => {
-  let status = 204;
-
-  const {id} = req.params;
-
-  try {
-    // TODO: refresh comic details
-  } catch (e) {
-    console.error(e);
-    status = 500;
-    error = "Couldn't refresh comic " + id;
-  }
-
-  res.status(status).send();
-});
-
 router.get('/comic/:id/chapters', async (req, res) => {
   let status = 200;
   let result = null;
