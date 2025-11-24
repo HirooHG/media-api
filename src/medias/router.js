@@ -7,6 +7,7 @@ const {
   refreshComickFollows,
   getComic,
   getComicChapterDetails,
+  refreshComicChapters,
 } = require('./comick/features/features');
 
 const router = express.Router();
@@ -152,6 +153,42 @@ router.get('/comic/:id/chapters', async (req, res) => {
 
   try {
     const chapters = await getComicChapters(comic_id);
+    if (chapters.error) {
+      status = chapters.status;
+      error = chapters.error;
+    } else result = chapters;
+  } catch (e) {
+    console.error(e);
+    status = 500;
+    error = "Couldn't load chapters";
+  }
+
+  res.status(status).send({
+    data: result,
+    error,
+  });
+});
+
+router.get('/refresh/comic/:id/chapters', async (req, res) => {
+  let status = 200;
+  let result = null;
+  let error = null;
+
+  const {id} = req.params;
+
+  if (!id || isNaN(Number(id))) {
+    res.status(400).send({
+      status: false,
+      data: null,
+      error: 'Param id mandatory and a number',
+    });
+    return;
+  }
+
+  const comic_id = Number(id);
+
+  try {
+    const chapters = await refreshComicChapters(comic_id);
     if (chapters.error) {
       status = chapters.status;
       error = chapters.error;

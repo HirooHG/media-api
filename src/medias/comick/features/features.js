@@ -97,17 +97,26 @@ const refreshComickFollows = async (page, per_page) => {
 
 // Comic page
 // automatically get chapters when entering comic page
-const getComicChapters = async (id) => {
+const getComicChapters = async (id, refresh = false) => {
   const c = await getMedia({comic_id: id});
   if (c === null) return {error: "Couldn't find the comic", status: 404};
 
-  const existingChapters = await getMediaChapters(c.comic_id);
-  if (existingChapters.length !== 0) return existingChapters;
+  return await getMediaChapters(c.comic_id);
+};
 
-  const chs = await getComickComicChapters(c.comic_slug);
-  if (chs.length === 0) return ch;
+// Comic page
+// refresh chapters with button
+const refreshComicChapters = async (id) => {
+  const c = await getMedia({comic_id: id});
+  if (c === null) return {error: "Couldn't find the comic", status: 404};
 
-  const newChs = chs.map((cha) => {
+  const [ecs, chs] = await Promise.all([
+    getMediaChapters(c.comic_id),
+    getComickComicChapters(c.comic_slug),
+  ]);
+  const chapsToAdd = chs.filter((ch) => !ecs.some((ech) => ech.id === ch.id));
+
+  const newChs = chapsToAdd.map((cha) => {
     const props = selectComicChapterProps(cha);
     return {
       comic_id: c.comic_id,
@@ -165,5 +174,6 @@ module.exports = {
   getComic,
   refreshComickFollows,
   getComicChapters,
+  refreshComicChapters,
   getComicChapterDetails,
 };
