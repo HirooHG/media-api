@@ -139,6 +139,9 @@ const getComicChapterDetails = async (comic_id, chapter_id) => {
   const chDetails = await getComickComicChapterDetails(comic_slug, ch);
   if (!chDetails) return {error: "Couldn't fetch chapter details", status: 500};
 
+  // A chapter probably won't be updated, probability close to 0
+  if (chDetails.images) return chDetails;
+
   const localUri = './public/images/' + comic_id + '/' + chDetails.id + '/';
   createDir(localUri, true);
 
