@@ -2,8 +2,7 @@
 services:
   api:
     image: media-api
-    build:
-      context: .
+    build: .
     env_file:
       - .env
     container_name: media-api
