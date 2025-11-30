@@ -11,6 +11,14 @@ const auth = db.collection('auth');
 const medias = db.collection('media');
 const chapters = db.collection('chapters');
 
+const getAuth = async (doc) => {
+  return await auth.findOne(doc);
+};
+
+const setAuth = async (domain, token, identity) => {
+  return await auth.updateOne({domain}, {domain, token, identity}, {upsert: true});
+};
+
 /// Medias
 const getMedias = async (doc, proj, per_page, page = 1) => {
   let ms = medias
@@ -28,10 +36,6 @@ const getMedia = async (doc) => {
 
 const getMediaById = async (id) => {
   return await medias.findOne({comic_id: id});
-};
-
-const getAuth = async (doc) => {
-  return await auth.findOne(doc);
 };
 
 const insertManyMedias = async (m) => {
@@ -84,6 +88,7 @@ module.exports = {
   initClient,
   closeClient,
   getAuth,
+  setAuth,
   // medias
   getMedias,
   getMedia,
