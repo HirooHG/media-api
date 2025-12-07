@@ -13,12 +13,16 @@ const {
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const {page, per_page} = req.query;
+  const {page, per_page, status} = req.query;
   let result = null;
   let error = null;
-  let status = 200;
+  let reqStatus = 200;
 
-  if ((page && isNaN(Number(page))) || (per_page && isNaN(Number(per_page)))) {
+  if (
+    (page && isNaN(Number(page))) ||
+    (per_page && isNaN(Number(per_page))) ||
+    (status && isNaN(Number(status)))
+  ) {
     res.status(400).json({
       error: 'Page or per page query parameter is not a number',
     });
@@ -27,20 +31,21 @@ router.get('/', async (req, res) => {
 
   const p = Number(page);
   const pp = Number(per_page);
+  const st = status ? Number(status) : null;
 
   try {
-    const res = await getAllComics(p, pp);
+    const res = await getAllComics(p, pp, st);
     if (res.error) {
-      status = 400;
+      reqStatus = 400;
       error = result.error;
     } else result = res;
   } catch (e) {
     console.error(e);
-    status = 500;
+    reqStatus = 500;
     error = "Couldn't load comics";
   }
 
-  res.status(status).json({
+  res.status(reqStatus).json({
     data: result,
     error,
   });

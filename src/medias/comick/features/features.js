@@ -51,8 +51,10 @@ const getComicImage = async (id) => {
 
 // Home page
 // get list of media
-const getAllComics = async (page, per_page) => {
-  return await getMedias(undefined, {_id: 0, id: 0}, per_page, page);
+const getAllComics = async (page, per_page, status) => {
+  const doc = status !== null ? {comic_status: status} : undefined;
+
+  return await getMedias(doc, {_id: 0, id: 0}, per_page, page);
 };
 
 // Comic page
