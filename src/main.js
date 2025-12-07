@@ -45,7 +45,7 @@ const server = app.listen(port, async () => {
       console.log('replaced current token');
     }
   } catch (err) {
-    console.error('client failed to init');
+    console.error('client failed to init: ' + err);
     process.exit(1);
   }
 });

@@ -16,7 +16,7 @@ const getAuth = async (doc) => {
 };
 
 const setAuth = async (domain, token, identity) => {
-  return await auth.updateOne({domain}, {domain, token, identity}, {upsert: true});
+  return await auth.updateOne({domain}, {$set: {domain, token, identity}}, {upsert: true});
 };
 
 /// Medias
