@@ -1,14 +1,14 @@
-const DOMAIN_EXT = process.env.DOMAIN ?? 'art';
-const DOMAIN = 'https://comick.' + DOMAIN_EXT;
-const API_URI = DOMAIN + '/api';
+const COM_DOMAIN = process.env.COM_DOMAIN ?? 'art';
+const COM_URI = process.env.COM_URI + '.' + COM_DOMAIN;
+const COM_API_URI = COM_URI + '/api';
 
-const TOKEN = process.env.TOKEN ?? null;
-const IDENTITY = process.env.IDENTITY ?? null;
+const COM_TOKEN = process.env.COM_TOKEN ?? null;
+const COM_IDENTITY = process.env.COM_IDENTITY ?? null;
 
 module.exports = {
-  DOMAIN_EXT,
-  DOMAIN,
-  API_URI,
-  TOKEN,
-  IDENTITY,
+  COM_DOMAIN,
+  COM_URI,
+  COM_API_URI,
+  COM_TOKEN,
+  COM_IDENTITY,
 };

@@ -7,16 +7,16 @@ const fs = require('fs');
 const {cfetch, ifetch} = require('./requests');
 const {getAuth} = require('../model/db');
 
-const {DOMAIN_EXT, DOMAIN, API_URI} = require('../constants');
+const {COM_DOMAIN, COM_URI, COM_API_URI} = require('../constants');
 
 const COMICK_ERROR = 'Error with fetch comick, renew the token maybe';
 
 const getComickFollows = async () => {
   const m = [];
-  const {identity, token} = await getAuth({domain: DOMAIN_EXT});
+  const {identity, token} = await getAuth({domain: COM_DOMAIN});
 
   const u =
-    API_URI +
+    COM_API_URI +
     '/user/' +
     identity +
     '/follows?order_by=updated_at&order_direction=desc&page=1&per_page=100';
@@ -29,7 +29,7 @@ const getComickFollows = async () => {
 
   for (let i = 2; i <= j.last_page; i++) {
     const uri =
-      API_URI +
+      COM_API_URI +
       '/user/' +
       identity +
       '/follows?order_by=updated_at&order_direction=desc&page=' +
@@ -44,8 +44,8 @@ const getComickFollows = async () => {
 };
 
 const getComickComicChapters = async (slug) => {
-  const {token} = await getAuth({domain: DOMAIN_EXT});
-  const bu = API_URI + '/comics/' + slug + '/chapter-list?lang=en&page=';
+  const {token} = await getAuth({domain: COM_DOMAIN});
+  const bu = COM_API_URI + '/comics/' + slug + '/chapter-list?lang=en&page=';
   const cs = [];
   const res = await cfetch(token, bu + 1);
   if (!res.ok) {
@@ -64,8 +64,8 @@ const getComickComicChapters = async (slug) => {
 };
 
 const getComickComicDetails = async (slug) => {
-  const {token} = await getAuth({domain: DOMAIN_EXT});
-  const u = DOMAIN + '/comic/' + slug;
+  const {token} = await getAuth({domain: COM_DOMAIN});
+  const u = COM_URI + '/comic/' + slug;
   const res = await cfetch(token, u);
   if (!res.ok) {
     throw Error(COMICK_ERROR);
@@ -78,8 +78,8 @@ const getComickComicDetails = async (slug) => {
 };
 
 const getComickComicChapterDetails = async (slug, chapter) => {
-  const {token} = await getAuth({domain: DOMAIN_EXT});
-  const u = DOMAIN + '/comic/' + slug + '/' + chapter.hid + '-chapter-' + chapter.chap + '-en';
+  const {token} = await getAuth({domain: COM_DOMAIN});
+  const u = COM_URI + '/comic/' + slug + '/' + chapter.hid + '-chapter-' + chapter.chap + '-en';
   const res = await cfetch(token, u);
   if (!res.ok) {
     throw Error(COMICK_ERROR);
