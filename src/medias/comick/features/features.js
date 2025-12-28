@@ -29,6 +29,7 @@ const {
   selectComicDetailsProps,
   selectComicChapterDetailsProps,
   selectComicChapterProps,
+  selectComicProps,
 } = require('./utils');
 
 // Home/Comic page
@@ -92,7 +93,11 @@ const refreshComickFollows = async (page, per_page) => {
 
   if (nem.length === 0) return em;
 
-  const c = await insertManyMedias(nem);
+  const mediasToInsert = nem.map((value) => {
+    return selectComicProps(value);
+  });
+
+  const c = await insertManyMedias(mediasToInsert);
   if (c !== nem.length)
     return {error: 'Inserted ' + c + ' comic, expected ' + nem.length, status: 500};
 

@@ -7,6 +7,20 @@ const getObj = (fields, obj) => {
   return obs;
 };
 
+const selectComicProps = (comic) => {
+  const fields = [
+    'id',
+    'comic_id',
+    'type',
+    'comic_title',
+    'comic_slug',
+    'comic_status',
+    'default_thumbnail',
+    'comic_last_chapter',
+  ];
+  return getObj(fields, comic);
+};
+
 const selectComicDetailsProps = (comic) => {
   const fields = [
     'hid',
@@ -41,4 +55,5 @@ module.exports = {
   selectComicDetailsProps,
   selectComicChapterProps,
   selectComicChapterDetailsProps,
+  selectComicProps,
 };
