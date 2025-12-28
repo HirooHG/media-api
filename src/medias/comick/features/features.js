@@ -41,7 +41,10 @@ const getComicImage = async (id) => {
   if (m.image) return m.image;
 
   const b = await getComickImage(m.default_thumbnail);
-  const {status, image} = await saveImage(b, m.comic_id, './public/images/');
+  const dir = './public/images/';
+  createDir(dir, true);
+
+  const {status, image} = await saveImage(b, m.comic_id, dir);
   if (!status) return {error: "Couldn't save the image", status: 500};
 
   await setMediaProp(m.comic_id, 'image', image);
@@ -52,7 +55,7 @@ const getComicImage = async (id) => {
 // Home page
 // get list of media
 const getAllComics = async (page, per_page, status) => {
-  const doc = status !== null ? {comic_status: status} : undefined;
+  const doc = status && status !== null ? {comic_status: status} : undefined;
 
   return await getMedias(doc, {_id: 0, id: 0}, per_page, page);
 };
@@ -93,7 +96,8 @@ const refreshComickFollows = async (page, per_page) => {
   if (c !== nem.length)
     return {error: 'Inserted ' + c + ' comic, expected ' + nem.length, status: 500};
 
-  return await getAllComics(page, per_page);
+  const comics = await getAllComics(page, per_page);
+  return comics;
 };
 
 // Comic page

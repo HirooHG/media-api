@@ -5,9 +5,9 @@ const compression = require('compression');
 
 require('dotenv').config();
 
-const {initClient, closeClient, setAuth, getAuth} = require('./medias/comick/model/db');
+const {initClient, closeClient} = require('./medias/comick/model/db');
+const {initAuth} = require('./medias/comick/features/auth');
 const mediasRouter = require('./medias/router');
-const {COM_TOKEN, COM_IDENTITY, COM_DOMAIN} = require('./medias/comick/constants');
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';
@@ -33,19 +33,9 @@ app.use('/media', mediasRouter);
 const server = app.listen(port, async () => {
   try {
     await initClient();
+    await initAuth();
     console.log('client initialized');
     console.log('server running on port ' + port);
-
-    const creds = await getAuth({domain: COM_DOMAIN});
-    if (creds === null) {
-      console.error('Auth creds unavailable');
-      process.exit(1);
-    }
-
-    if (creds.token !== COM_TOKEN && COM_IDENTITY !== null) {
-      await setAuth(COM_DOMAIN, COM_TOKEN, COM_IDENTITY);
-      console.log('replaced current token');
-    }
   } catch (err) {
     console.error('client failed to init: ' + err);
     process.exit(1);

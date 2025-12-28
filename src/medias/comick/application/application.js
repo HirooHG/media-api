@@ -24,6 +24,7 @@ const getComickFollows = async () => {
   if (!f.ok) {
     throw Error(COMICK_ERROR);
   }
+
   const j = await f.json();
   m.push(...j.data);
 
@@ -36,6 +37,10 @@ const getComickFollows = async () => {
       i +
       '&per_page=100';
     const p = await cfetch(token, uri);
+    if (!p.ok) {
+      break;
+    }
+
     const js = await p.json();
     m.push(...js.data);
   }
@@ -121,7 +126,7 @@ const saveImage = async (blob, id, uri) => {
   return {status: res, image: u};
 };
 
-const createDir = (dir, recursive) => {
+const createDir = (dir, recursive = false) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, {recursive});
   }
