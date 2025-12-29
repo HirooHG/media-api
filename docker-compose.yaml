@@ -1,22 +1,11 @@
 
 services:
-  api:
-    image: media-api
-    build: .
-    env_file:
-      - .env
-    container_name: media-api
-    restart: unless-stopped
-    ports:
-      - $PORT:$PORT
-    volumes:
-      - ./public:/api/public:rw
-    depends_on:
-      - db
   db:
     image: mongo:noble
     container_name: media-db
     restart: unless-stopped
+    ports:
+      - 27017:27017
     volumes:
       - db:/data/db
 
