@@ -5,7 +5,7 @@ const {parse} = require('node-html-parser');
 const fs = require('fs');
 
 const {cfetch, ifetch} = require('./requests');
-const {getAuth} = require('../model/db');
+const {getAuth} = require('../database/mongo');
 
 const {COM_DOMAIN, COM_URI, COM_API_URI} = require('../constants');
 

@@ -23,7 +23,7 @@ const {
   getMediaChapters,
   getMediaChapter,
   setChapter,
-} = require('../model/db');
+} = require('../database/mongo');
 
 const {
   selectComicDetailsProps,

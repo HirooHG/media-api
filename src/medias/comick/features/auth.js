@@ -1,5 +1,5 @@
 const {COM_TOKEN, COM_IDENTITY, COM_DOMAIN} = require('../constants');
-const {setAuth, getAuth} = require('../model/db');
+const {setAuth, getAuth} = require('../database/mongo');
 
 const initAuth = async () => {
   const domain = COM_DOMAIN;

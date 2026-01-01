@@ -5,7 +5,7 @@ const compression = require('compression');
 
 require('dotenv').config();
 
-const {initClient, closeClient} = require('./medias/comick/model/db');
+const {initClient, closeClient} = require('./medias/comick/database/mongo');
 const {initAuth} = require('./medias/comick/features/auth');
 const mediasRouter = require('./medias/router');
 
