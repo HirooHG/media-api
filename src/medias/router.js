@@ -8,7 +8,7 @@ const {
   getComic,
   getComicChapterDetails,
   refreshComicChapters,
-} = require('./comick/features/features');
+} = require('./features/features');
 
 const router = express.Router();
 

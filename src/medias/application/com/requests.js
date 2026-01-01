@@ -1,4 +1,4 @@
-const {COM_URI} = require('../constants');
+const {COM_URI} = require('../../constants');
 
 const ifetch = async (uri) => {
   return await fetch(uri, {

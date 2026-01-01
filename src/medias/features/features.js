@@ -10,7 +10,7 @@ const {
   getComickComicChapterDetails,
   saveImage,
   createDir,
-} = require('../application/application');
+} = require('../application/com/application');
 
 const {
   getMedia,

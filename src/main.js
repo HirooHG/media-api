@@ -5,8 +5,8 @@ const compression = require('compression');
 
 require('dotenv').config();
 
-const {initClient, closeClient} = require('./medias/comick/database/mongo');
-const {initAuth} = require('./medias/comick/features/auth');
+const {initClient, closeClient} = require('./medias/database/mongo');
+const {initAuth} = require('./medias/features/auth');
 const mediasRouter = require('./medias/router');
 
 const env = process.env.NODE_ENV ?? 'dev';
