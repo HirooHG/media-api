@@ -42,7 +42,7 @@ const getComicImage = async (id) => {
   if (m.image) return m.image;
 
   const b = await getComickImage(m.default_thumbnail);
-  const dir = './public/images/';
+  const dir = './public/images/medias/';
   createDir(dir, true);
 
   const {status, image} = await saveImage(b, m.comic_id, dir);
@@ -152,7 +152,7 @@ const getComicChapterDetails = async (comic_id, chapter_id) => {
   const chDetails = await getComickComicChapterDetails(comic_slug, ch);
   if (!chDetails) return {error: "Couldn't fetch chapter details", status: 500};
 
-  const localUri = './public/images/' + comic_id + '/' + chDetails.id + '/';
+  const localUri = './public/images/medias/' + comic_id + '/' + chDetails.id + '/';
   createDir(localUri, true);
 
   const imagesComick = selectComicChapterDetailsProps(chDetails.images);
