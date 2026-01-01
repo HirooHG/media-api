@@ -88,13 +88,17 @@ router.get('/comic/:id', async (req, res) => {
 });
 
 router.get('/refresh', async (req, res) => {
-  let status = 200;
+  let reqStatus = 200;
   let error = null;
   let result = null;
 
-  const {page, per_page} = req.query;
+  const {page, per_page, status} = req.query;
 
-  if ((page && isNaN(Number(page))) || (per_page && isNaN(Number(per_page)))) {
+  if (
+    (page && isNaN(Number(page))) ||
+    (per_page && isNaN(Number(per_page))) ||
+    (status && isNaN(Number(status)))
+  ) {
     res.status(400).json({
       error: 'Page or per page query parameter is not a number',
     });
@@ -103,20 +107,21 @@ router.get('/refresh', async (req, res) => {
 
   const p = Number(page);
   const pp = Number(per_page);
+  const st = Number(status);
 
   try {
-    const comics = await refreshComickFollows(p, pp);
+    const comics = await refreshComickFollows(p, pp, status);
     if (comics.error) {
-      status = comics.status;
+      reqStatus = comics.status;
       error = comics.error;
     } else result = comics;
   } catch (e) {
     console.error(e);
-    status = 500;
+    reqStatus = 500;
     error = "Couldn't refresh comics";
   }
 
-  res.status(status).send({
+  res.status(reqStatus).send({
     data: result,
     error,
   });

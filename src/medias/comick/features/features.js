@@ -56,7 +56,7 @@ const getComicImage = async (id) => {
 // Home page
 // get list of media
 const getAllComics = async (page, per_page, status) => {
-  const doc = status && status !== null ? {comic_status: status} : undefined;
+  const doc = status !== undefined && status !== null ? {comic_status: status} : undefined;
 
   return await getMedias(doc, {_id: 0, id: 0}, per_page, page);
 };
@@ -86,7 +86,7 @@ const getComic = async (comic_id) => {
 
 // Home page
 // press button refresh to update current list
-const refreshComickFollows = async (page, per_page) => {
+const refreshComickFollows = async (page, per_page, status) => {
   const [em, m] = await Promise.all([getMedias(), getComickFollows()]);
 
   const nem = m.filter((me) => !em.some((eme) => me.comic_id === eme.comic_id));
@@ -101,13 +101,13 @@ const refreshComickFollows = async (page, per_page) => {
   if (c !== nem.length)
     return {error: 'Inserted ' + c + ' comic, expected ' + nem.length, status: 500};
 
-  const comics = await getAllComics(page, per_page);
+  const comics = await getAllComics(page, per_page, status);
   return comics;
 };
 
 // Comic page
 // automatically get chapters when entering comic page
-const getComicChapters = async (id, refresh = false) => {
+const getComicChapters = async (id) => {
   const c = await getMedia({comic_id: id});
   if (c === null) return {error: "Couldn't find the comic", status: 404};
 
