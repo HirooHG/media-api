@@ -45,6 +45,7 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | AppE
     getComickComicChapters(c.comic_slug),
   ]);
   const chapsToAdd = chs.filter((ch) => !ecs.some((ech) => ech.id === ch.id));
+  if (chapsToAdd.length === 0) return ecs;
 
   const newChs = chapsToAdd.map((v) => {
     const cha = _.pick(v, chapterDtoKeys) as ChapterDto;

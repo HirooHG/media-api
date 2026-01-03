@@ -1,6 +1,7 @@
 import type {ChapterDto} from '../dto/chapter.dto';
+import type {Pagination} from './pagination';
 
 export interface ChapterListResponse {
-  last_page: number;
   data: ChapterDto[];
+  pagination: Pagination;
 }
