@@ -1,21 +1,19 @@
-const express = require('express');
+import express from 'express';
 
-const {
-  getAllComics,
-  getComicImage,
-  getComicChapters,
-  refreshComickFollows,
-  getComic,
-  getComicChapterDetails,
-  refreshComicChapters,
-} = require('./features/features');
+import {getAllComics, getComicImage, refreshComickFollows, getComic} from './features/medias';
+
+import {getComicChapters, getComicChapterDetails, refreshComicChapters} from './features/chapters';
+
+import type {Media} from './models/domain/media';
+import type {MediaImage} from './models/domain/media-image';
+import type {Chapter} from './models/domain/chapter';
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   const {page, per_page, status} = req.query;
-  let result = null;
-  let error = null;
+  let data: Media[] | null = null;
+  let error: string | null = null;
   let reqStatus = 200;
 
   if (
@@ -24,21 +22,17 @@ router.get('/', async (req, res) => {
     (status && isNaN(Number(status)))
   ) {
     res.status(400).json({
-      error: 'Page or per page query parameter is not a number',
+      error: 'Page, per page or status query parameter is not a number',
     });
     return;
   }
 
-  const p = Number(page);
-  const pp = Number(per_page);
+  const p = page ? Number(page) : 1;
+  const pp = per_page ? Number(per_page) : 5;
   const st = status ? Number(status) : null;
 
   try {
-    const res = await getAllComics(p, pp, st);
-    if (res.error) {
-      reqStatus = 400;
-      error = result.error;
-    } else result = res;
+    data = await getAllComics(p, pp, st);
   } catch (e) {
     console.error(e);
     reqStatus = 500;
@@ -46,15 +40,15 @@ router.get('/', async (req, res) => {
   }
 
   res.status(reqStatus).json({
-    data: result,
+    data,
     error,
   });
 });
 
 router.get('/comic/:id', async (req, res) => {
   let status = 200;
-  let result = null;
-  let error = null;
+  let data: Media | null = null;
+  let error: string | null = null;
 
   const {id} = req.params;
 
@@ -71,10 +65,10 @@ router.get('/comic/:id', async (req, res) => {
 
   try {
     const comic = await getComic(comic_id);
-    if (comic.error) {
+    if ('error' in comic) {
       status = comic.status;
       error = comic.error;
-    } else result = comic;
+    } else data = comic;
   } catch (e) {
     console.error(e);
     status = 500;
@@ -82,15 +76,15 @@ router.get('/comic/:id', async (req, res) => {
   }
 
   res.status(status).send({
-    data: result,
+    data,
     error,
   });
 });
 
 router.get('/refresh', async (req, res) => {
   let reqStatus = 200;
-  let error = null;
-  let result = null;
+  let data: Media[] | null = null;
+  let error: string | null = null;
 
   const {page, per_page, status} = req.query;
 
@@ -100,21 +94,21 @@ router.get('/refresh', async (req, res) => {
     (status && isNaN(Number(status)))
   ) {
     res.status(400).json({
-      error: 'Page or per page query parameter is not a number',
+      error: 'Page, per page or status query parameter is not a number',
     });
     return;
   }
 
-  const p = Number(page);
-  const pp = Number(per_page);
-  const st = Number(status);
+  const p = page ? Number(page) : 1;
+  const pp = per_page ? Number(per_page) : 5;
+  const st = status ? Number(status) : null;
 
   try {
-    const comics = await refreshComickFollows(p, pp, status);
-    if (comics.error) {
+    const comics = await refreshComickFollows(p, pp, st);
+    if ('error' in comics) {
       reqStatus = comics.status;
       error = comics.error;
-    } else result = comics;
+    } else data = comics;
   } catch (e) {
     console.error(e);
     reqStatus = 500;
@@ -122,15 +116,15 @@ router.get('/refresh', async (req, res) => {
   }
 
   res.status(reqStatus).send({
-    data: result,
+    data,
     error,
   });
 });
 
 router.get('/comic/:id/chapters', async (req, res) => {
   let status = 200;
-  let result = null;
-  let error = null;
+  let data: Chapter[] | null = null;
+  let error: string | null = null;
 
   const {id} = req.params;
 
@@ -147,10 +141,10 @@ router.get('/comic/:id/chapters', async (req, res) => {
 
   try {
     const chapters = await getComicChapters(comic_id);
-    if (chapters.error) {
+    if ('error' in chapters) {
       status = chapters.status;
       error = chapters.error;
-    } else result = chapters;
+    } else data = chapters;
   } catch (e) {
     console.error(e);
     status = 500;
@@ -158,15 +152,15 @@ router.get('/comic/:id/chapters', async (req, res) => {
   }
 
   res.status(status).send({
-    data: result,
+    data,
     error,
   });
 });
 
 router.get('/refresh/comic/:id/chapters', async (req, res) => {
   let status = 200;
-  let result = null;
-  let error = null;
+  let data: Chapter[] | null = null;
+  let error: string | null = null;
 
   const {id} = req.params;
 
@@ -183,10 +177,10 @@ router.get('/refresh/comic/:id/chapters', async (req, res) => {
 
   try {
     const chapters = await refreshComicChapters(comic_id);
-    if (chapters.error) {
+    if ('error' in chapters) {
       status = chapters.status;
       error = chapters.error;
-    } else result = chapters;
+    } else data = chapters;
   } catch (e) {
     console.error(e);
     status = 500;
@@ -194,15 +188,15 @@ router.get('/refresh/comic/:id/chapters', async (req, res) => {
   }
 
   res.status(status).send({
-    data: result,
+    data,
     error,
   });
 });
 
 router.get('/comic/:comic_id/chapter/:chapter_id', async (req, res) => {
   let status = 200;
-  let result = null;
-  let error = null;
+  let data: Chapter | null = null;
+  let error: string | null = null;
 
   const {comic_id, chapter_id} = req.params;
 
@@ -220,10 +214,10 @@ router.get('/comic/:comic_id/chapter/:chapter_id', async (req, res) => {
 
   try {
     const chapter = await getComicChapterDetails(parsedComicId, parsedChapterId);
-    if (chapter.error) {
+    if ('error' in chapter) {
       status = chapter.status;
       error = chapter.error;
-    } else result = chapter;
+    } else data = chapter;
   } catch (e) {
     console.error(e);
     status = 500;
@@ -231,15 +225,15 @@ router.get('/comic/:comic_id/chapter/:chapter_id', async (req, res) => {
   }
 
   res.status(status).send({
-    data: result,
+    data,
     error,
   });
 });
 
 router.post('/comic/image/:id', async (req, res) => {
   let status = 200;
-  let result = null;
-  let error = null;
+  let data: MediaImage | null = null;
+  let error: string | null = null;
 
   const {id} = req.params;
 
@@ -256,12 +250,10 @@ router.post('/comic/image/:id', async (req, res) => {
 
   try {
     const res = await getComicImage(comic_id);
-    if (res.error) {
+    if ('error' in res) {
       error = res.error;
       status = res.status;
-    } else {
-      result = res;
-    }
+    } else data = res;
   } catch (e) {
     console.error(e);
     status = 500;
@@ -269,9 +261,9 @@ router.post('/comic/image/:id', async (req, res) => {
   }
 
   res.status(status).send({
-    data: result,
+    data,
     error,
   });
 });
 
-module.exports = router;
+export default router;

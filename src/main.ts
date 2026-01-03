@@ -1,13 +1,14 @@
-const express = require('express');
-const helmet = require('helmet');
-const cors = require('cors');
-const compression = require('compression');
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import compression from 'compression';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+import {initClient, closeClient} from './medias/database/mongo';
+import {initAuth} from './medias/features/auth';
+import mediasRouter from './medias/router';
 
-const {initClient, closeClient} = require('./medias/database/mongo');
-const {initAuth} = require('./medias/features/auth');
-const mediasRouter = require('./medias/router');
+dotenv.config();
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';

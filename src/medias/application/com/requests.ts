@@ -1,6 +1,6 @@
-const {COM_URI} = require('../../constants');
+import {COM_URI} from '../../constants';
 
-const ifetch = async (uri) => {
+export const ifetch = async (uri: string) => {
   return await fetch(uri, {
     method: 'GET',
     headers: {
@@ -12,7 +12,7 @@ const ifetch = async (uri) => {
   });
 };
 
-const cfetch = async (token, uri) => {
+export const cfetch = async (token: string, uri: string) => {
   return await fetch(uri, {
     method: 'GET',
     headers: {
@@ -22,9 +22,4 @@ const cfetch = async (token, uri) => {
       'Authorization': 'Bearer ' + token,
     },
   });
-};
-
-module.exports = {
-  cfetch,
-  ifetch,
 };
