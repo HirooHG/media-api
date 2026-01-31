@@ -8,3 +8,10 @@ export interface AppAuth extends WithId<Document> {
   domain: string | null;
   identity: string | null;
 }
+
+export interface AppAuthDto extends Document {
+  type: AuthType;
+  token: string;
+  domain: string | null;
+  identity: string | null;
+}

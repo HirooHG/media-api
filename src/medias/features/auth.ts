@@ -1,7 +1,7 @@
 import {ObjectId} from 'mongodb';
 import {COM_TOKEN, COM_IDENTITY, COM_DOMAIN} from '../constants';
 import {setAuth, getAuth} from '../database/mongo';
-import type {AppAuth} from '../models/shared/app-auth';
+import type {AppAuth, AppAuthDto} from '../models/shared/app-auth';
 
 export const initAuth = async () => {
   const domain = COM_DOMAIN;
@@ -14,8 +14,7 @@ export const initAuth = async () => {
 
   const creds = await getAuth({domain});
   if (creds?.token !== token || creds?.identity !== identity || creds?.domain !== domain) {
-    const appAuth: AppAuth = {
-      _id: new ObjectId(),
+    const appAuth: AppAuthDto = {
       type: 'com',
       token,
       identity,
@@ -23,7 +22,7 @@ export const initAuth = async () => {
     };
 
     const res = await setAuth(appAuth);
-    if (res.acknowledged && res.upsertedCount !== 0) {
+    if (res.acknowledged) {
       console.log('replaced current token|domain|identity');
       return;
     }

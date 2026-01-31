@@ -3,7 +3,7 @@
 
 import type {Document, Filter} from 'mongodb';
 import {MongoClient} from 'mongodb';
-import type {AppAuth} from '../models/shared/app-auth';
+import type {AppAuth, AppAuthDto} from '../models/shared/app-auth';
 
 const DB_HOST = process.env.DB_HOST ?? 'localhost';
 
@@ -15,7 +15,7 @@ export const getAuth = async (doc: Filter<Document>): Promise<AppAuth | null> =>
   return await auth.findOne<AppAuth>(doc);
 };
 
-export const setAuth = async (appAuth: AppAuth) => {
+export const setAuth = async (appAuth: AppAuthDto) => {
   return await auth.updateOne({domain: appAuth.domain}, {$set: appAuth}, {upsert: true});
 };
 
