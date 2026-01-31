@@ -2,13 +2,10 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
-import dotenv from 'dotenv';
 
 import {initClient, closeClient} from './medias/database/mongo';
 import {initAuth} from './medias/features/auth';
 import mediasRouter from './medias/router';
-
-dotenv.config();
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';

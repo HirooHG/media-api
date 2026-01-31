@@ -14,9 +14,9 @@ export interface ChapterDto {
   group_name: string[];
 }
 
-export interface ChapterWithComicIdDto extends ChapterDto {
+export type ChapterWithComicIdDto = ChapterDto & {
   comic_id: number;
-}
+};
 
 export const chapterDtoKeys = [
   'id',

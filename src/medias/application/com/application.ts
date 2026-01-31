@@ -72,7 +72,7 @@ export const getComickComicChapters = async (slug: string): Promise<ChapterDto[]
   const ch = (await res.json()) as ChapterListResponse;
   cs.push(...ch.data);
 
-  for (let i = 2; i <= ch.last_page; i++) {
+  for (let i = 2; i <= ch.pagination.last_page; i++) {
     const chh = (await (await cfetch(token, bu + i)).json()) as ChapterListResponse;
     cs.push(...chh.data);
   }
