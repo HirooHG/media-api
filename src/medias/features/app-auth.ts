@@ -1,9 +1,8 @@
-import {ObjectId} from 'mongodb';
 import {COM_TOKEN, COM_IDENTITY, COM_DOMAIN} from '../constants';
 import {setAuth, getAuth} from '../database/mongo';
-import type {AppAuth, AppAuthDto} from '../models/shared/app-auth';
+import type {AppAuthDto} from '../models/shared/app-auth';
 
-export const initAuth = async () => {
+export const initComAuth = async () => {
   const domain = COM_DOMAIN;
   const token = COM_TOKEN;
   const identity = COM_IDENTITY;

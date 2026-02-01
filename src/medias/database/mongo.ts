@@ -8,8 +8,11 @@ import type {AppAuth, AppAuthDto} from '../models/shared/app-auth';
 const DB_HOST = process.env.DB_HOST ?? 'localhost';
 
 const client = new MongoClient('mongodb://' + DB_HOST + ':27017');
-export const db = client.db('media-db');
-const auth = db.collection('auth');
+const db = client.db('media-db');
+const auth = db.collection('app-auths');
+
+export const chapters = db.collection('chapters');
+export const medias = db.collection('media');
 
 export const getAuth = async (doc: Filter<Document>): Promise<AppAuth | null> => {
   return await auth.findOne<AppAuth>(doc);

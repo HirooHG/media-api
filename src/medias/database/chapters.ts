@@ -1,9 +1,7 @@
 import type {Document} from 'mongodb';
 import type {Chapter} from '../models/domain/chapter';
-import {db} from './mongo';
+import {chapters} from './mongo';
 import type {ChapterDto} from '../models/dto/chapter.dto';
-
-const chapters = db.collection('chapters');
 
 export const getMediaChapters = async (comic_id: number): Promise<Chapter[]> => {
   return (await chapters.find({comic_id}).toArray()) as Chapter[];

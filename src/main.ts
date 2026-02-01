@@ -4,7 +4,7 @@ import cors from 'cors';
 import compression from 'compression';
 
 import {initClient, closeClient} from './medias/database/mongo';
-import {initAuth} from './medias/features/auth';
+import {initComAuth} from './medias/features/app-auth';
 import mediasRouter from './medias/router';
 
 const env = process.env.NODE_ENV ?? 'dev';
@@ -31,7 +31,7 @@ app.use('/media', mediasRouter);
 const server = app.listen(port, async () => {
   try {
     await initClient();
-    await initAuth();
+    await initComAuth();
     console.log('client initialized');
     console.log('server running on port ' + port);
   } catch (err) {

@@ -1,9 +1,7 @@
 import type {Document, Filter} from 'mongodb';
 import type {Media} from '../models/domain/media';
-import {db} from './mongo';
+import {medias} from './mongo';
 import type {MediaDto} from '../models/dto/media.dto';
-
-const medias = db.collection('media');
 
 export const getMedias = async (): Promise<Media[]> => {
   return (await medias.find().toArray()) as Media[];
