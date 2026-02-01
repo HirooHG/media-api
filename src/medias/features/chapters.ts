@@ -1,4 +1,4 @@
-import type {AppError} from '../models/shared/app-error';
+import type {ApiError} from '../models/shared/api-error';
 import type {Chapter} from '../models/domain/chapter';
 import {
   chapterDtoKeys,
@@ -27,7 +27,7 @@ import _ from 'lodash';
 
 // Media page
 // automatically get chapters when entering comic page
-export const getComicChapters = async (id: number): Promise<Chapter[] | AppError> => {
+export const getComicChapters = async (id: number): Promise<Chapter[] | ApiError> => {
   const m = await getMedia({comic_id: id});
   if (m === null) return {error: "Couldn't find the media", status: 404};
 
@@ -36,7 +36,7 @@ export const getComicChapters = async (id: number): Promise<Chapter[] | AppError
 
 // Media page
 // refresh chapters with button
-export const refreshComicChapters = async (id: number): Promise<Chapter[] | AppError> => {
+export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiError> => {
   const c = await getMedia({comic_id: id});
   if (c === null) return {error: "Couldn't find the media", status: 404};
 
@@ -68,7 +68,7 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | AppE
 export const getComicChapterDetails = async (
   comic_id: number,
   chapter_id: number,
-): Promise<Chapter | AppError> => {
+): Promise<Chapter | ApiError> => {
   const ch = await getMediaChapter(comic_id, chapter_id);
   if (!ch || ch === null) return {error: "Couldn't find the chapter", status: 404};
 

@@ -7,20 +7,20 @@ import {parse} from 'node-html-parser';
 import fs from 'fs';
 
 import {cfetch, ifetch} from './requests';
-import {getAuth} from '../../database/mongo';
+import {getAppAuth} from '../../database/mongo';
 
 import {COM_DOMAIN, COM_URI, COM_API_URI} from '../../constants';
 import type {MediaDetailsDto, MediaDto} from '../../models/dto/media.dto';
-import type {FollowsResponse} from '../../models/response/follows';
-import type {ChapterListResponse} from '../../models/response/chapter-list';
+import type {FollowsResponse} from '../../models/app-responses/follows';
+import type {ChapterListResponse} from '../../models/app-responses/chapter-list';
 import type {ChapterDto} from '../../models/dto/chapter.dto';
-import type {ChapterDetailsResponse} from '../../models/response/chapter-details';
+import type {ChapterDetailsResponse} from '../../models/app-responses/chapter-details';
 
 const COMICK_ERROR = 'Error with fetch comick, renew the token maybe';
 
 export const getComickFollows = async (): Promise<MediaDto[]> => {
   const m: MediaDto[] = [];
-  const creds = await getAuth({domain: COM_DOMAIN});
+  const creds = await getAppAuth({domain: COM_DOMAIN});
   if (!creds) throw new Error('credentials unavailable');
   const {identity, token} = creds;
 
@@ -58,7 +58,7 @@ export const getComickFollows = async (): Promise<MediaDto[]> => {
 };
 
 export const getComickComicChapters = async (slug: string): Promise<ChapterDto[]> => {
-  const creds = await getAuth({domain: COM_DOMAIN});
+  const creds = await getAppAuth({domain: COM_DOMAIN});
   if (!creds) throw new Error('credentials unavailable');
   const {token} = creds;
 
@@ -81,7 +81,7 @@ export const getComickComicChapters = async (slug: string): Promise<ChapterDto[]
 };
 
 export const getComickComicDetails = async (slug: string): Promise<MediaDetailsDto> => {
-  const creds = await getAuth({domain: COM_DOMAIN});
+  const creds = await getAppAuth({domain: COM_DOMAIN});
   if (!creds) throw new Error('credentials unavailable');
   const {token} = creds;
 
@@ -103,7 +103,7 @@ export const getComickComicChapterDetails = async (
   slug: string,
   chapter: Chapter,
 ): Promise<ChapterDetailsResponse> => {
-  const creds = await getAuth({domain: COM_DOMAIN});
+  const creds = await getAppAuth({domain: COM_DOMAIN});
   if (!creds) throw new Error('credentials unavailable');
   const {token} = creds;
 

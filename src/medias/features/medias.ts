@@ -21,7 +21,7 @@ import {
   getMediasPaginated,
 } from '../database/medias';
 
-import type {AppError} from '../models/shared/app-error';
+import type {ApiError} from '../models/shared/api-error';
 import type {Media} from '../models/domain/media';
 import {mediaDetailsDtoKeys, mediaDtoKeys, type MediaDto} from '../models/dto/media.dto';
 import type {MediaImage} from '../models/domain/media-image';
@@ -30,7 +30,7 @@ import _ from 'lodash';
 // Home/Media page
 // if image in shimmer
 // press button to fetch image from comick
-export const getComicImage = async (id: number): Promise<MediaImage | AppError> => {
+export const getComicImage = async (id: number): Promise<MediaImage | ApiError> => {
   const m = await getMediaById(id);
 
   if (m === null) return {error: 'Media not found', status: 404};
@@ -64,7 +64,7 @@ export const getAllComics = async (page: number, per_page: number, status: numbe
 
 // Media page
 // get details of media
-export const getComic = async (id: number): Promise<Media | AppError> => {
+export const getComic = async (id: number): Promise<Media | ApiError> => {
   const media = await getMedia({comic_id: id});
   if (media === null) return {error: "Couldn't find the media", status: 404};
   if (media.detailled) return media;
@@ -88,7 +88,7 @@ export const refreshComickFollows = async (
   page: number,
   per_page: number,
   status: number | null,
-): Promise<Media[] | AppError> => {
+): Promise<Media[] | ApiError> => {
   const [em, m] = await Promise.all([getMedias(), getComickFollows()]);
 
   const mm = m.map((v) => {

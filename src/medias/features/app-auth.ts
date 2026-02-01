@@ -1,5 +1,5 @@
 import {COM_TOKEN, COM_IDENTITY, COM_DOMAIN} from '../constants';
-import {setAuth, getAuth} from '../database/mongo';
+import {setAppAuth, getAppAuth} from '../database/mongo';
 import type {AppAuthDto} from '../models/shared/app-auth';
 
 export const initComAuth = async () => {
@@ -11,7 +11,7 @@ export const initComAuth = async () => {
     throw new Error('Token, domain or identity not provided');
   }
 
-  const creds = await getAuth({domain});
+  const creds = await getAppAuth({domain});
   if (creds?.token !== token || creds?.identity !== identity || creds?.domain !== domain) {
     const appAuth: AppAuthDto = {
       type: 'com',
@@ -20,7 +20,7 @@ export const initComAuth = async () => {
       domain,
     };
 
-    const res = await setAuth(appAuth);
+    const res = await setAppAuth(appAuth);
     if (res.acknowledged) {
       console.log('replaced current token|domain|identity');
       return;

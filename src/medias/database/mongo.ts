@@ -9,17 +9,17 @@ const DB_HOST = process.env.DB_HOST ?? 'localhost';
 
 const client = new MongoClient('mongodb://' + DB_HOST + ':27017');
 const db = client.db('media-db');
-const auth = db.collection('app-auths');
+const app_auth = db.collection('app-auths');
 
 export const chapters = db.collection('chapters');
 export const medias = db.collection('media');
 
-export const getAuth = async (doc: Filter<Document>): Promise<AppAuth | null> => {
-  return await auth.findOne<AppAuth>(doc);
+export const getAppAuth = async (doc: Filter<Document>): Promise<AppAuth | null> => {
+  return await app_auth.findOne<AppAuth>(doc);
 };
 
-export const setAuth = async (appAuth: AppAuthDto) => {
-  return await auth.updateOne({domain: appAuth.domain}, {$set: appAuth}, {upsert: true});
+export const setAppAuth = async (appAuth: AppAuthDto) => {
+  return await app_auth.updateOne({domain: appAuth.domain}, {$set: appAuth}, {upsert: true});
 };
 
 /// Client
