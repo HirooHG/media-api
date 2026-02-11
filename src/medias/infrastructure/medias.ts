@@ -1,6 +1,6 @@
 import type {Document, Filter} from 'mongodb';
 import type {Media} from '../models/domain/media';
-import {medias} from './mongo';
+import {medias} from '../../infrastructure/mongo';
 import type {MediaDto} from '../models/dto/media.dto';
 
 export const getMedias = async (): Promise<Media[]> => {

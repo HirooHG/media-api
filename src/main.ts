@@ -2,10 +2,14 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 
-import {initClient, closeClient} from './medias/database/mongo';
+import {initClient, closeClient} from './infrastructure/mongo';
 import {initComAuth} from './medias/features/app-auth';
 import mediasRouter from './medias/router';
+import authRouter from './auth/router';
+import {initAuth} from './auth/features';
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';
@@ -18,6 +22,8 @@ const corsOpts = {
 
 const app = express();
 
+app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(compression());
 app.use(
   helmet({crossOriginResourcePolicy: {policy: env === 'production' ? 'same-origin' : 'same-site'}}),
@@ -26,11 +32,13 @@ app.use(cors(corsOpts));
 app.use(express.static('public'));
 app.disable('x-powered-by');
 
+app.use('/auth', authRouter);
 app.use('/media', mediasRouter);
 
 const server = app.listen(port, async () => {
   try {
     await initClient();
+    await initAuth();
     await initComAuth();
     console.log('client initialized');
     console.log('server running on port ' + port);

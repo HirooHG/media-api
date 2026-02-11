@@ -7,7 +7,7 @@ import {parse} from 'node-html-parser';
 import fs from 'fs';
 
 import {cfetch, ifetch} from './requests';
-import {getAppAuth} from '../../database/mongo';
+import {getAppAuth} from '../../../infrastructure/mongo';
 
 import {COM_DOMAIN, COM_URI, COM_API_URI} from '../../constants';
 import type {MediaDetailsDto, MediaDto} from '../../models/dto/media.dto';

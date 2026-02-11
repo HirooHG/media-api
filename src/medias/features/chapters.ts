@@ -1,4 +1,4 @@
-import type {ApiError} from '../models/shared/api-error';
+import type {ApiError} from '../../models/api-error';
 import type {Chapter} from '../models/domain/chapter';
 import {
   chapterDtoKeys,
@@ -15,14 +15,14 @@ import {
   createDir,
 } from '../application/com/application';
 
-import {getMedia} from '../database/medias';
+import {getMedia} from '../infrastructure/medias';
 
 import {
   insertManyChapters,
   getMediaChapters,
   getMediaChapter,
   setChapter,
-} from '../database/chapters';
+} from '../infrastructure/chapters';
 import _ from 'lodash';
 
 // Media page
@@ -48,6 +48,7 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
   if (chapsToAdd.length === 0) return ecs;
 
   const newChs = chapsToAdd.map((v) => {
+    // TODO: try to change it to zod parsing
     const cha = _.pick(v, chapterDtoKeys) as ChapterDto;
     const chap: ChapterWithComicIdDto = {
       comic_id: c.comic_id,

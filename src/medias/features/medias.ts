@@ -19,9 +19,9 @@ import {
   setMedia,
   insertManyMedias,
   getMediasPaginated,
-} from '../database/medias';
+} from '../infrastructure/medias';
 
-import type {ApiError} from '../models/shared/api-error';
+import type {ApiError} from '../../models/api-error';
 import type {Media} from '../models/domain/media';
 import {mediaDetailsDtoKeys, mediaDtoKeys, type MediaDto} from '../models/dto/media.dto';
 import type {MediaImage} from '../models/domain/media-image';
@@ -70,6 +70,7 @@ export const getComic = async (id: number): Promise<Media | ApiError> => {
   if (media.detailled) return media;
 
   const mDetails = await getComickComicDetails(media.comic_slug);
+  // TODO: try to change it to zod parsing
   const mediaDetails = _.pick(mDetails, mediaDetailsDtoKeys);
   const newMedia: Media = {
     ...media,
@@ -92,6 +93,7 @@ export const refreshComickFollows = async (
   const [em, m] = await Promise.all([getMedias(), getComickFollows()]);
 
   const mm = m.map((v) => {
+    // TODO: try to change it to zod parsing
     return _.pick(v, mediaDtoKeys) as MediaDto;
   });
 

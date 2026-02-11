@@ -1,6 +1,6 @@
 import type {Document} from 'mongodb';
 import type {Chapter} from '../models/domain/chapter';
-import {chapters} from './mongo';
+import {chapters} from '../../infrastructure/mongo';
 import type {ChapterDto} from '../models/dto/chapter.dto';
 
 export const getMediaChapters = async (comic_id: number): Promise<Chapter[]> => {

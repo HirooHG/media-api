@@ -7,10 +7,16 @@ import {getComicChapters, getComicChapterDetails, refreshComicChapters} from './
 import type {Media} from './models/domain/media';
 import type {MediaImage} from './models/domain/media-image';
 import type {Chapter} from './models/domain/chapter';
+import {auth, type UserRequest} from '../auth/middlewares/auth-middleware';
 
 const router = express.Router();
 
+router.use((req, res, next) => {
+  auth(req as UserRequest, res, next);
+});
+
 router.get('/', async (req, res) => {
+  // TODO: replace by zod verification for all endpoints
   const {page, per_page, status} = req.query;
   let data: Media[] | null = null;
   let error: string | null = null;

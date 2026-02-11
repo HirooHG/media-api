@@ -3,14 +3,15 @@
 
 import type {Document, Filter} from 'mongodb';
 import {MongoClient} from 'mongodb';
-import type {AppAuth, AppAuthDto} from '../models/shared/app-auth';
+import type {AppAuth, AppAuthDto} from '../medias/models/shared/app-auth';
 
 const DB_HOST = process.env.DB_HOST ?? 'localhost';
 
 const client = new MongoClient('mongodb://' + DB_HOST + ':27017');
 const db = client.db('media-db');
-const app_auth = db.collection('app-auths');
 
+export const api_auth = db.collection('api-auths');
+export const app_auth = db.collection('app-auths');
 export const chapters = db.collection('chapters');
 export const medias = db.collection('media');
 
