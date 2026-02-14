@@ -9,7 +9,7 @@ export interface UserRequest extends Request {
 
 export const adminOnly = (req: UserRequest, res: Response, next: NextFunction) => {
   if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({message: 'Access denied'});
+    return res.status(403).json({data: null, error: 'Access denied'});
   }
 
   next();
@@ -20,19 +20,19 @@ export const auth = (req: UserRequest, res: Response, next: NextFunction) => {
   const token = header && header.split(' ')[1]; // earer ...
 
   if (!token) {
-    return res.status(401).json({message: 'Token missing'});
+    return res.status(401).json({data: null, error: 'Token missing'});
   }
 
   jwt.verify(token, sec, (err, decoded) => {
     if (err || !decoded) {
-      return res.status(403).json({message: 'Invalid or expired token'});
+      return res.status(403).json({data: null, error: 'Invalid or expired token'});
     }
 
     try {
       const user = userTokenDtoSchema.parse(decoded as JwtPayload);
       req.user = user;
     } catch (e) {
-      return res.status(403).json({message: 'Invalid token'});
+      return res.status(403).json({data: null, error: 'Invalid token'});
     }
 
     next();
