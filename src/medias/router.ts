@@ -87,7 +87,7 @@ router.get('/comic/:id', async (req, res) => {
   });
 });
 
-router.get('/refresh', async (req, res) => {
+router.post('/refresh', async (req, res) => {
   let reqStatus = 200;
   let data: Media[] | null = null;
   let error: string | null = null;
@@ -163,7 +163,7 @@ router.get('/comic/:id/chapters', async (req, res) => {
   });
 });
 
-router.get('/refresh/comic/:id/chapters', async (req, res) => {
+router.post('/refresh/comic/:id/chapters', async (req, res) => {
   let status = 200;
   let data: Chapter[] | null = null;
   let error: string | null = null;
@@ -236,7 +236,7 @@ router.get('/comic/:comic_id/chapter/:chapter_id', async (req, res) => {
   });
 });
 
-router.post('/comic/image/:id', async (req, res) => {
+router.get('/comic/image/:id', async (req, res) => {
   let status = 200;
   let data: MediaImage | null = null;
   let error: string | null = null;

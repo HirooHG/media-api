@@ -28,13 +28,12 @@ export const auth = (req: UserRequest, res: Response, next: NextFunction) => {
       return res.status(403).json({data: null, error: 'Invalid or expired token'});
     }
 
-    try {
-      const user = userTokenDtoSchema.parse(decoded as JwtPayload);
-      req.user = user;
-    } catch (e) {
+    const user = userTokenDtoSchema.safeParse(decoded as JwtPayload);
+    if (!user.success || user.error) {
       return res.status(403).json({data: null, error: 'Invalid token'});
     }
 
+    req.user = user.data;
     next();
   });
 };

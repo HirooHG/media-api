@@ -34,7 +34,7 @@ router.post('/refresh', validateData(refreshTokenSchema, 'body'), async (req, re
 
 router.post('/', validateData(userLoginDtoSchema, 'body'), async (req, res) => {
   let status = 200;
-  let data: AuthResult | null = null;
+  let user: AuthResult | null = null;
   let error: string | null = null;
 
   const userDto = userLoginDtoSchema.parse(req.body);
@@ -44,7 +44,7 @@ router.post('/', validateData(userLoginDtoSchema, 'body'), async (req, res) => {
     if ('error' in token) {
       error = token.error;
       status = token.status;
-    } else data = token;
+    } else user = token;
   } catch (e) {
     console.error(e);
     status = 500;
@@ -52,7 +52,7 @@ router.post('/', validateData(userLoginDtoSchema, 'body'), async (req, res) => {
   }
 
   res.status(status).send({
-    data,
+    user,
     error,
   });
 });

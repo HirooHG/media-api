@@ -7,7 +7,7 @@ import {encryptPassword, verifyPassword} from './utils/crypto';
 import {getRefreshToken, getToken, sec} from './utils/token';
 import type {UserDto} from './models/schemas/user-schema';
 import type {RefreshTokenDto} from './models/schemas/refreshToken-schema';
-import jwt from 'jsonwebtoken';
+import jwt, {type JwtPayload} from 'jsonwebtoken';
 
 export const initAuth = async () => {
   const admin = process.env.ADMIN_NAME;
@@ -68,19 +68,28 @@ export const refreshToken = async (dto: RefreshTokenDto): Promise<AuthResult | A
     };
   }
 
-  const pr = new Promise<boolean>((resolve) => {
+  const pr = new Promise<{resolved: boolean; error?: string}>((resolve) => {
     jwt.verify(dto.refreshToken, sec, (err, decoded) => {
-      if (err || !decoded) {
-        resolve(false);
+      const payload = decoded as JwtPayload | undefined;
+      const isTheUser = payload?.sub !== user._id.toString();
+
+      if (err || !payload || !isTheUser) {
+        resolve({
+          resolved: false,
+          error: isTheUser ? 'User not matching the token' : 'Refresh token expired',
+        });
+        return;
       }
 
-      resolve(true);
+      resolve({resolved: true});
     });
   });
 
-  if (!(await pr)) {
+  const {resolved, error} = await pr;
+
+  if (!resolved) {
     return {
-      error: 'Refresh token expired',
+      error: error ?? 'Refresh token expired',
       status: 401,
     };
   }

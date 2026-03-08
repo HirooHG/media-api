@@ -18,14 +18,17 @@ export const sec =
 const secret = new TextEncoder().encode(sec);
 
 export const getRefreshToken = async (user: User) => {
-  return await genToken(user, '15m');
+  return await genToken(user, '60 minutes');
 };
 
 export const getToken = async (user: User) => {
-  return await genToken(user, '5m');
+  return await genToken(user, '5 minutes');
 };
 
-const genToken = async (user: User, duration: '5m' | '15m' | '30m' | '60m') => {
+const genToken = async (
+  user: User,
+  duration: '1 minutes' | '5 minutes' | '15 minutes' | '30 minutes' | '60 minutes',
+) => {
   return await new SignJWT({sub: user._id.toHexString(), role: user.role})
     .setProtectedHeader({alg: algo})
     .setIssuedAt()
