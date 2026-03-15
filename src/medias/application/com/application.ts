@@ -7,7 +7,6 @@ import {parse} from 'node-html-parser';
 import fs from 'fs';
 
 import {cfetch, ifetch} from './requests';
-import {getAppAuth} from '../../../infrastructure/mongo';
 
 import {COM_DOMAIN, COM_URI, COM_API_URI} from '../../constants';
 import type {MediaDetailsDto, MediaDto} from '../../models/dto/media.dto';
@@ -15,6 +14,7 @@ import type {FollowsResponse} from '../../models/app-responses/follows';
 import type {ChapterListResponse} from '../../models/app-responses/chapter-list';
 import type {ChapterDto} from '../../models/dto/chapter.dto';
 import type {ChapterDetailsResponse} from '../../models/app-responses/chapter-details';
+import {getAppAuth} from '../../infrastructure/app-auth';
 
 const COMICK_ERROR = 'Error with fetch comick, renew the token maybe';
 

@@ -1,13 +1,16 @@
 import express from 'express';
 
-import {getAllComics, getComicImage, refreshComickFollows, getComic} from './features/medias';
-
-import {getComicChapters, getComicChapterDetails, refreshComicChapters} from './features/chapters';
-
 import type {Media} from './models/domain/media';
 import type {MediaImage} from './models/domain/media-image';
 import type {Chapter} from './models/domain/chapter';
 import {auth, type UserRequest} from '../auth/middlewares/auth-middleware';
+import {getAllComics} from './features/medias/get-all-comics';
+import {getComic} from './features/medias/get-comic';
+import {refreshComickFollows} from './features/medias/refresh-comick-follows';
+import {getComicChapters} from './features/chapters/get-comic-chapters';
+import {refreshComicChapters} from './features/chapters/refresh-comic-chapters';
+import {getComicChapterDetails} from './features/chapters/get-comic-chapter-details';
+import {getComicImage} from './features/medias/get-comic-image';
 
 const router = express.Router();
 

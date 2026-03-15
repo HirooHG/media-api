@@ -1,5 +1,5 @@
 import {COM_TOKEN, COM_IDENTITY, COM_DOMAIN} from '../constants';
-import {setAppAuth, getAppAuth} from '../../infrastructure/mongo';
+import {getAppAuth, setAppAuth} from '../infrastructure/app-auth';
 import type {AppAuthDto} from '../models/shared/app-auth';
 
 export const initComAuth = async () => {

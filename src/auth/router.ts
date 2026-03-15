@@ -1,9 +1,10 @@
 import express from 'express';
 import {validateData} from './middlewares/validation';
 import {userLoginDtoSchema} from './models/schemas/user-schema';
-import {refreshToken, signIn} from './features';
 import type {AuthResult} from './models/result/auth-result';
 import {refreshTokenSchema} from './models/schemas/refreshToken-schema';
+import {refreshToken} from './features/refresh-token';
+import {signIn} from './features/sign-in';
 
 const router = express.Router();
 

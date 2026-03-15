@@ -9,7 +9,7 @@ import {initClient, closeClient} from './infrastructure/mongo';
 import {initComAuth} from './medias/features/app-auth';
 import mediasRouter from './medias/router';
 import authRouter from './auth/router';
-import {initAuth} from './auth/features';
+import {initAuth} from './auth/features/init-auth';
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';
