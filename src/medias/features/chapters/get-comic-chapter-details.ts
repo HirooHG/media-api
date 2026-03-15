@@ -27,7 +27,7 @@ export const getComicChapterDetails = async (
   if (!chDetails) return {error: "Couldn't fetch chapter details", status: 500};
   const {chapter} = chDetails;
 
-  const localUri = './public/images/medias/' + comic_id + '/' + chapter.id + '/';
+  const localUri = './public/medias/' + comic_id + '/' + chapter.id + '/';
   createDir(localUri, true);
 
   const images: ChapterImage[] = [];

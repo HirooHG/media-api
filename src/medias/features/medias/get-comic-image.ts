@@ -10,7 +10,7 @@ export const getComicImage = async (id: number): Promise<MediaImage | ApiError> 
   if (m.image) return m.image;
 
   const b = await getComickImage(m.default_thumbnail);
-  const dir = './public/images/medias/';
+  const dir = './public/medias/';
   createDir(dir, true);
 
   const {status, image} = await saveImage(b, m.comic_id, dir);
