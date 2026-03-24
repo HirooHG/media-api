@@ -17,12 +17,12 @@ export const refreshToken = async (dto: RefreshTokenDto): Promise<AuthResult | A
   const pr = new Promise<{resolved: boolean; error?: string}>((resolve) => {
     jwt.verify(dto.refreshToken, sec, (err, decoded) => {
       const payload = decoded as JwtPayload | undefined;
-      const isTheUser = payload?.sub !== user._id.toString();
+      const isTheUser = payload?.sub === user._id.toString();
 
-      if (err || !payload || !isTheUser) {
+      if (err !== null || !payload || !isTheUser) {
         resolve({
           resolved: false,
-          error: isTheUser ? 'User not matching the token' : 'Refresh token expired',
+          error: !isTheUser ? 'User not matching the token' : 'Refresh token expired',
         });
         return;
       }
@@ -36,7 +36,7 @@ export const refreshToken = async (dto: RefreshTokenDto): Promise<AuthResult | A
   if (!resolved) {
     return {
       error: error ?? 'Refresh token expired',
-      status: 401,
+      status: 403,
     };
   }
 
