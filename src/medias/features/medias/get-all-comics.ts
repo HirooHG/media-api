@@ -5,5 +5,5 @@ export const getAllComics = async (page: number, per_page: number, status: numbe
   const doc: Filter<Document> | undefined =
     status !== undefined && status !== null ? {comic_status: status} : undefined;
 
-  return await getMediasPaginated(doc, {_id: 0, id: 0}, per_page, page);
+  return await getMediasPaginated({doc, per_page, page});
 };

@@ -6,6 +6,7 @@ export interface MediaDto {
   type: MediaReadingState;
   comic_title: string;
   comic_slug: string;
+  comic_status: number;
   default_thumbnail: string;
 }
 
@@ -26,6 +27,7 @@ export const mediaDtoKeys = [
   'type',
   'comic_title',
   'comic_slug',
+  'comic_status',
   'default_thumbnail',
 ];
 

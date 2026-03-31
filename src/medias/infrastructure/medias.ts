@@ -2,22 +2,29 @@ import type {Document, Filter} from 'mongodb';
 import type {Media} from '../models/domain/media';
 import {medias} from '../../infrastructure/mongo';
 import type {MediaDto} from '../models/dto/media.dto';
+import type {PaginationDto} from '../models/schemas/pagination-schema';
 
 export const getMedias = async (): Promise<Media[]> => {
   return (await medias.find().toArray()) as Media[];
 };
 
-export const getMediasPaginated = async (
-  doc: Filter<Document> | undefined,
-  proj: Document,
-  per_page: number = 5,
-  page: number = 1,
-): Promise<Media[]> => {
+export const getMediasPaginated = async ({
+  page,
+  per_page,
+  doc,
+  proj,
+}: {
+  doc?: Filter<Document> | undefined;
+  proj?: Document;
+} & PaginationDto): Promise<Media[]> => {
+  const pp = per_page ?? 5;
+  const p = page ?? 1;
+
   let ms = medias
     .find(doc ?? {})
-    .project(proj)
-    .skip((per_page ?? 5) * (page - 1));
-  if (per_page) ms = ms.limit(per_page);
+    .project({_id: 0, ...proj})
+    .skip(pp * (p - 1))
+    .limit(pp);
 
   return (await ms.toArray()) as Media[];
 };
