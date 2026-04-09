@@ -3,7 +3,7 @@ import type {ApiError} from '../../../models/api-error';
 import {getComickComicDetails} from '../../application/com/application';
 import {getMedia, setMedia} from '../../infrastructure/medias';
 import type {Media} from '../../models/domain/media';
-import {mediaDetailsDtoKeys} from '../../models/dto/media.dto';
+import {mediaDetailsComSchema} from '../../models/responses/com/media-com-schema';
 
 export const getComic = async (id: number): Promise<Media | ApiError> => {
   const media = await getMedia({comic_id: id});
@@ -11,11 +11,18 @@ export const getComic = async (id: number): Promise<Media | ApiError> => {
   if (media.detailled) return media;
 
   const mDetails = await getComickComicDetails(media.comic_slug);
-  // TODO: try to change it to zod parsing
-  const mediaDetails = _.pick(mDetails, mediaDetailsDtoKeys);
+  const mediaDetails = mediaDetailsComSchema.safeParse(mDetails);
+
+  if (!mediaDetails.success)
+    throw new Error(
+      'Failed parsing details for comic ' + media.comic_id + ': ' + mediaDetails.error,
+    );
+
+  const {data} = mediaDetails;
   const newMedia: Media = {
+    description: data.desc,
     ...media,
-    ...mediaDetails,
+    ...data,
   };
 
   newMedia.detailled = true;

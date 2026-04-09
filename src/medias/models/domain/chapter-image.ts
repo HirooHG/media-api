@@ -1,4 +1,6 @@
 export interface ChapterImage {
-  id: number;
+  h: number;
+  w: number;
+  name?: string | undefined;
   url: string;
 }

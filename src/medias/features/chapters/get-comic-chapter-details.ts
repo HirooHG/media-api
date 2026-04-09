@@ -32,9 +32,10 @@ export const getComicChapterDetails = async (
 
   const images: ChapterImage[] = [];
   for (let i = 0; i < chapter.images.length; i++) {
-    const {url, name, id} = chapter.images[i]!;
+    const {url, name, h, w} = chapter.images[i]!;
     const im = await getComickImage(url);
     const {status, image} = await saveImage(im, i, localUri);
+
     if (!status)
       return {
         error:
@@ -43,7 +44,9 @@ export const getComicChapterDetails = async (
       };
 
     images.push({
-      id,
+      h,
+      w,
+      name,
       url: image,
     });
   }

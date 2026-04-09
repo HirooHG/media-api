@@ -1,7 +1,6 @@
 import type {Document, Filter} from 'mongodb';
 import type {Media} from '../models/domain/media';
 import {medias} from '../../infrastructure/mongo';
-import type {MediaDto} from '../models/dto/media.dto';
 import type {PaginationDto} from '../models/schemas/pagination-schema';
 
 export const getMedias = async (): Promise<Media[]> => {
@@ -30,14 +29,14 @@ export const getMediasPaginated = async ({
 };
 
 export const getMedia = async (doc: Filter<Document>): Promise<Media | null> => {
-  return await medias.findOne<Media>(doc);
+  return await medias.findOne<Media>(doc, {projection: {_id: 0}});
 };
 
 export const getMediaById = async (id: number): Promise<Media | null> => {
-  return await medias.findOne<Media>({comic_id: id});
+  return await medias.findOne<Media>({id}, {projection: {_id: 0}});
 };
 
-export const insertManyMedias = async (m: MediaDto[]) => {
+export const insertManyMedias = async (m: Media[]) => {
   return (await medias.insertMany(m)).insertedCount;
 };
 
@@ -47,6 +46,8 @@ export const setMediaProp = async (id: number, prop: string, data: string | numb
   return await medias.updateOne({comic_id: id}, {$set: obj});
 };
 
-export const setMedia = async (id: number, obj: MediaDto): Promise<Media | null> => {
-  return (await medias.findOneAndReplace({comic_id: id}, obj)) as Media | null;
+export const setMedia = async (id: number, obj: Media): Promise<Media | null> => {
+  return (await medias.findOneAndReplace({comic_id: id}, obj, {
+    projection: {_id: 0},
+  })) as Media | null;
 };

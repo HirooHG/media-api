@@ -3,8 +3,9 @@ import type {ApiError} from '../../../models/api-error';
 import {getComickFollows} from '../../application/com/application';
 import {getMedias, insertManyMedias} from '../../infrastructure/medias';
 import type {Media} from '../../models/domain/media';
-import {mediaDtoKeys, type MediaDto} from '../../models/dto/media.dto';
 import {getAllComics} from './get-all-comics';
+import {ObjectId} from 'mongodb';
+import {mediaComSchema, type MediaComDto} from '../../models/responses/com/media-com-schema';
 
 export const refreshComickFollows = async (
   page: number,
@@ -14,15 +15,29 @@ export const refreshComickFollows = async (
   const [em, m] = await Promise.all([getMedias(), getComickFollows()]);
 
   const mm = m.map((v) => {
-    // TODO: try to change it to zod parsing
-    return _.pick(v, mediaDtoKeys) as MediaDto;
+    const obj = mediaComSchema.safeParse(v);
+
+    if (!obj.success) throw new Error('Error parsing media: ' + obj.error.message);
+
+    return obj.data as MediaComDto;
   });
 
-  const dtos = mm.filter((me: MediaDto) => !em.some((eme: Media) => me.comic_id === eme.comic_id));
+  const dtos = mm.filter(
+    (me: MediaComDto) => !em.some((eme: Media) => me.comic_id === eme.comic_id),
+  );
 
-  if (dtos.length === 0) return em;
+  if (dtos.length === 0) return await getAllComics(page, per_page, status);
 
-  const c = await insertManyMedias(dtos);
+  const c = await insertManyMedias(
+    dtos.map((v: MediaComDto) => ({
+      _id: new ObjectId(),
+      detailled: false,
+      title: v.comic_title,
+      slug: v.comic_slug,
+      status: v.comic_status,
+      ...v,
+    })),
+  );
   if (c !== dtos.length)
     return {error: 'Inserted ' + c + ' comic, expected ' + dtos.length, status: 500};
 

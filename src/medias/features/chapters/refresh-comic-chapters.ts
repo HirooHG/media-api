@@ -4,11 +4,8 @@ import {getComickComicChapters} from '../../application/com/application';
 import {getMediaChapters, insertManyChapters} from '../../infrastructure/chapters';
 import {getMedia} from '../../infrastructure/medias';
 import type {Chapter} from '../../models/domain/chapter';
-import {
-  chapterDtoKeys,
-  type ChapterDto,
-  type ChapterWithComicIdDto,
-} from '../../models/dto/chapter.dto';
+import {ObjectId} from 'mongodb';
+import {chapterComSchema} from '../../models/responses/com/chapter-com-schema';
 
 export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiError> => {
   const c = await getMedia({comic_id: id});
@@ -22,11 +19,16 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
   if (chapsToAdd.length === 0) return ecs;
 
   const newChs = chapsToAdd.map((v) => {
-    // TODO: try to change it to zod parsing
-    const cha = _.pick(v, chapterDtoKeys) as ChapterDto;
-    const chap: ChapterWithComicIdDto = {
-      comic_id: c.comic_id,
+    const parse = chapterComSchema.safeParse(v);
+
+    if (!parse.success) throw new Error('Failed to parse chapter: ' + parse.error);
+
+    const {data: cha} = parse;
+    const chap: Chapter = {
       ...cha,
+      _id: new ObjectId(),
+      comic_id: c.comic_id,
+      images: [],
     };
     return chap;
   });

@@ -3,9 +3,9 @@
 
 import {MongoClient} from 'mongodb';
 
-const DB_HOST = process.env.DB_HOST ?? 'localhost';
+const DB_HOST = process.env.DB_HOST ?? 'localhost:27017';
 
-const client = new MongoClient('mongodb://' + DB_HOST + ':27017');
+const client = new MongoClient('mongodb://' + DB_HOST);
 const db = client.db('media-db');
 
 export const api_auth = db.collection('api-auths');

@@ -9,19 +9,28 @@ import fs from 'fs';
 import {cfetch, ifetch} from './requests';
 
 import {COM_DOMAIN, COM_URI, COM_API_URI} from '../../constants';
-import type {MediaDetailsDto, MediaDto} from '../../models/dto/media.dto';
-import type {FollowsResponse} from '../../models/app-responses/follows';
-import type {ChapterListResponse} from '../../models/app-responses/chapter-list';
-import type {ChapterDto} from '../../models/dto/chapter.dto';
-import type {ChapterDetailsResponse} from '../../models/app-responses/chapter-details';
+import {followsResponse} from '../../models/responses/com/follows';
+import {
+  chapterComDetailsSchema,
+  type ChapterComDetailsDto,
+} from '../../models/responses/com/chapter-details';
 import {getAppAuth} from '../../infrastructure/app-auth';
+import {comChapterListResponse} from '../../models/responses/com/chapter-list';
+import {
+  mediaDetailsComSchema,
+  type MediaComDto,
+  type MediaDetailsComDto,
+} from '../../models/responses/com/media-com-schema';
+import type {ChapterComDto} from '../../models/responses/com/chapter-com-schema';
 
 const COMICK_ERROR = 'Error with fetch comick, renew the token maybe';
 
-export const getComickFollows = async (): Promise<MediaDto[]> => {
-  const m: MediaDto[] = [];
+export const getComickFollows = async (): Promise<MediaComDto[]> => {
+  const m: MediaComDto[] = [];
   const creds = await getAppAuth({domain: COM_DOMAIN});
+
   if (!creds) throw new Error('credentials unavailable');
+
   const {identity, token} = creds;
 
   const u =
@@ -30,14 +39,16 @@ export const getComickFollows = async (): Promise<MediaDto[]> => {
     identity +
     '/follows?order_by=updated_at&order_direction=desc&page=1&per_page=100';
   const f = await cfetch(token, u);
-  if (!f.ok) {
-    throw Error(COMICK_ERROR);
-  }
+  if (!f.ok) throw Error(COMICK_ERROR);
 
-  const j = (await f.json()) as FollowsResponse;
-  m.push(...j.data);
+  const j = await f.json();
+  const follows = followsResponse.safeParse(j);
 
-  for (let i = 2; i <= j.last_page; i++) {
+  if (!follows.success) throw new Error('Failed to parse follows: ' + follows.error.message);
+
+  m.push(...follows.data.data);
+
+  for (let i = 2; i <= follows.data.last_page; i++) {
     const uri =
       COM_API_URI +
       '/user/' +
@@ -46,89 +57,117 @@ export const getComickFollows = async (): Promise<MediaDto[]> => {
       i +
       '&per_page=100';
     const p = await cfetch(token, uri);
-    if (!p.ok) {
-      break;
-    }
+    if (!p.ok) throw new Error(COMICK_ERROR);
 
-    const js = (await p.json()) as any;
-    m.push(...js.data);
+    const js = await p.json();
+    const follows = followsResponse.safeParse(js);
+
+    if (!follows.success) throw new Error('Failed to parse follows: ' + follows.error.message);
+
+    m.push(...follows.data.data);
   }
 
   return m;
 };
 
-export const getComickComicChapters = async (slug: string): Promise<ChapterDto[]> => {
+export const getComickComicChapters = async (slug: string): Promise<ChapterComDto[]> => {
   const creds = await getAppAuth({domain: COM_DOMAIN});
   if (!creds) throw new Error('credentials unavailable');
   const {token} = creds;
 
   const bu = COM_API_URI + '/comics/' + slug + '/chapter-list?lang=en&page=';
-  const cs: ChapterDto[] = [];
+  const cs: ChapterComDto[] = [];
   const res = await cfetch(token, bu + '1');
-  if (!res.ok) {
-    throw Error(COMICK_ERROR);
-  }
+  if (!res.ok) throw Error(COMICK_ERROR);
 
-  const ch = (await res.json()) as ChapterListResponse;
-  cs.push(...ch.data);
+  const page = await res.json();
+  const ch = comChapterListResponse.safeParse(page);
 
-  for (let i = 2; i <= ch.pagination.last_page; i++) {
-    const chh = (await (await cfetch(token, bu + i)).json()) as ChapterListResponse;
-    cs.push(...chh.data);
+  if (!ch.success) throw new Error('Failed to parse chapter dto: ' + ch.error.message);
+
+  cs.push(...ch.data.data);
+
+  for (let i = 2; i <= ch.data.pagination.last_page; i++) {
+    const resPage = await cfetch(token, bu + i);
+
+    if (!resPage.ok) throw new Error(COMICK_ERROR);
+
+    const mediaPage = await resPage.json();
+    const chapters = comChapterListResponse.safeParse(mediaPage);
+
+    if (!chapters.success)
+      throw new Error('Failed to parse chapter dto: ' + chapters.error.message);
+
+    cs.push(...chapters.data.data);
   }
 
   return cs;
 };
 
-export const getComickComicDetails = async (slug: string): Promise<MediaDetailsDto> => {
+export const getComickComicDetails = async (slug: string): Promise<MediaDetailsComDto> => {
   const creds = await getAppAuth({domain: COM_DOMAIN});
   if (!creds) throw new Error('credentials unavailable');
   const {token} = creds;
 
   const u = COM_URI + '/comic/' + slug;
   const res = await cfetch(token, u);
-  if (!res.ok) {
-    throw Error(COMICK_ERROR);
-  }
+
+  if (!res.ok) throw Error(COMICK_ERROR);
+
   const t = await res.text();
   const d = parse(t);
   const dt = d.getElementById('comic-data')?.innerText.trim();
+
   if (!dt) throw new Error('No data available for this comic');
 
-  const da: MediaDetailsDto = JSON.parse(dt);
-  return da;
+  const da = JSON.parse(dt);
+  const details = mediaDetailsComSchema.safeParse(da);
+
+  if (!details.success) throw new Error('Failed parse media details: ' + details.error.message);
+
+  return details.data;
 };
 
 export const getComickComicChapterDetails = async (
   slug: string,
   chapter: Chapter,
-): Promise<ChapterDetailsResponse> => {
+): Promise<ChapterComDetailsDto> => {
   const creds = await getAppAuth({domain: COM_DOMAIN});
+
   if (!creds) throw new Error('credentials unavailable');
+
   const {token} = creds;
 
-  const u = COM_URI + '/comic/' + slug + '/' + chapter.hid + '-chapter-' + chapter.chap + '-en';
-  const res = await cfetch(token, u);
-  if (!res.ok) {
-    throw Error(COMICK_ERROR);
-  }
-  const t = await res.text();
-  const d = parse(t);
-  const dt = d.getElementById('sv-data')?.innerText.trim();
-  if (!dt) throw new Error('No data available for this comic');
+  const url = COM_URI + '/comic/' + slug + '/' + chapter.hid + '-chapter-' + chapter.chap + '-en';
+  const res = await cfetch(token, url);
 
-  const da: ChapterDetailsResponse = JSON.parse(dt);
-  return da;
+  if (!res.ok) throw Error(COMICK_ERROR);
+
+  const t = await res.text();
+  const page = parse(t);
+  const data = page.getElementById('sv-data')?.innerText.trim();
+
+  if (!data) throw new Error('No data available for this comic');
+
+  const parsedData = JSON.parse(data);
+  const details = chapterComDetailsSchema.safeParse(parsedData);
+
+  if (!details.success)
+    throw new Error('Failed to parse chapter details: ' + details.error.message);
+
+  return details.data;
 };
 
+// TODO: replace by minIO
 export const getComickImage = async (uri: string) => {
   const i = await ifetch(uri);
-  if (!i.ok) {
-    throw Error(COMICK_ERROR);
-  }
+
+  if (!i.ok) throw Error(COMICK_ERROR);
+
   return await i.blob();
 };
 
+// TODO: replace by minIO
 export const saveImage = async (blob: Blob, id: number, uri: string) => {
   const e = blob.type.split('/')[1];
   const f = new File([blob], id + '.' + e);
@@ -145,6 +184,7 @@ export const saveImage = async (blob: Blob, id: number, uri: string) => {
   return {status: res, image: u};
 };
 
+// TODO: replace by minIO
 export const createDir = (dir: string, recursive: boolean = false) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, {recursive});
