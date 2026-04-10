@@ -18,8 +18,9 @@ export const insertManyChapters = async (chs: Chapter[]) => {
 };
 
 export const setChapterProp = async (id: number, prop: string, data: object) => {
-  const obj = {} as Document;
-  obj[prop] = data;
+  const obj: Document = {
+    [prop]: data,
+  };
   return (await chapters.updateOne({id}, {$set: obj})).upsertedCount;
 };
 

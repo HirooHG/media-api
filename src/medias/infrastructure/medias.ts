@@ -41,8 +41,9 @@ export const insertManyMedias = async (m: Media[]) => {
 };
 
 export const setMediaProp = async (id: number, prop: string, data: string | number | object) => {
-  const obj = {} as Document;
-  obj[prop] = data;
+  const obj: Document = {
+    [prop]: data,
+  };
   return await medias.updateOne({comic_id: id}, {$set: obj});
 };
 
