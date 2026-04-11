@@ -1,15 +1,18 @@
-FROM node:lts-alpine AS base
+FROM oven/bun:latest AS base
 
 FROM base AS builder
 
 WORKDIR /api
 
-COPY ./package.json .
+COPY ./package.json ./bun.lock ./
 
-RUN npm i
+RUN bun i --production=false
 
 FROM base AS runner
 
+COPY --from=builder /api/node_modules ./node_modules
 COPY . .
 
-CMD ["npm", "run", "start"]
+ENV NODE_ENV=production
+
+CMD ["bun", "run", "dev"]
