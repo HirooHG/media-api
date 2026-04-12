@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import type {ApiError} from '../../../models/api-error';
 import {getComickFollows} from '../../application/com/application';
 import {getMedias, insertManyMedias} from '../../infrastructure/medias';
@@ -30,12 +29,13 @@ export const refreshComickFollows = async (
 
   const c = await insertManyMedias(
     dtos.map((v: MediaComDto) => ({
+      ...v,
       _id: new ObjectId(),
+      id: v.comic_id,
       detailled: false,
       title: v.comic_title,
       slug: v.comic_slug,
       status: v.comic_status,
-      ...v,
     })),
   );
   if (c !== dtos.length)

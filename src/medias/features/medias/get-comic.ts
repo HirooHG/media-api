@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import type {ApiError} from '../../../models/api-error';
 import {getComickComicDetails} from '../../application/com/application';
 import {getMedia, setMedia} from '../../infrastructure/medias';
