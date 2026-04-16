@@ -10,6 +10,7 @@ import {initComAuth} from './medias/features/app-auth';
 import mediasRouter from './medias/router';
 import authRouter from './auth/router';
 import {initAuth} from './auth/features/init-auth';
+import {initMinio} from './infrastructure/minio';
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';
@@ -38,8 +39,9 @@ app.use('/media', mediasRouter);
 const server = app.listen(port, async () => {
   try {
     await initClient();
-    await initAuth();
-    await initComAuth();
+
+    await Promise.all([initAuth(), initComAuth(), initMinio()]);
+
     console.log('client initialized');
     console.log('server running on port ' + port);
   } catch (err) {

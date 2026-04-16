@@ -1,10 +1,6 @@
+import {saveImage} from '../../../infrastructure/minio';
 import type {ApiError} from '../../../models/api-error';
-import {
-  createDir,
-  getComickComicChapterDetails,
-  getComickImage,
-  saveImage,
-} from '../../application/com/application';
+import {getComickComicChapterDetails, getComickImage} from '../../application/com/application';
 import {getMediaChapter, setChapter} from '../../infrastructure/chapters';
 import {getMedia} from '../../infrastructure/medias';
 import type {Chapter} from '../../models/domain/chapter';
@@ -14,45 +10,40 @@ export const getComicChapterDetails = async (
   comic_id: number,
   chapter_id: number,
 ): Promise<Chapter | ApiError> => {
-  const ch = await getMediaChapter(comic_id, chapter_id);
-  if (!ch || ch === null) return {error: "Couldn't find the chapter", status: 404};
+  const chap = await getMediaChapter(comic_id, chapter_id);
+  if (!chap || chap === null) return {error: "Couldn't find the chapter", status: 404};
 
   // A chapter probably won't be updated, probability close to 0
-  if (ch.images) return ch;
+  if (chap.images.length !== 0) return chap;
 
   const media = await getMedia({comic_id});
+
   if (!media) return {error: "Couldn't find the media", status: 404};
 
-  const chDetails = await getComickComicChapterDetails(media.comic_slug, ch);
-  if (!chDetails) return {error: "Couldn't fetch chapter details", status: 500};
-  const {chapter} = chDetails;
+  const chapterDetails = await getComickComicChapterDetails(media.comic_slug, chap);
 
-  const localUri = './public/medias/' + comic_id + '/' + chapter.id + '/';
-  createDir(localUri, true);
+  if (!chapterDetails) return {error: "Couldn't fetch chapter details", status: 500};
+
+  const {chapter} = chapterDetails;
+
+  console.log(chapter);
 
   const images: ChapterImage[] = [];
   for (let i = 0; i < chapter.images.length; i++) {
     const {url, name, h, w} = chapter.images[i]!;
     const im = await getComickImage(url);
-    const {status, image} = await saveImage(im, i, localUri);
-
-    if (!status)
-      return {
-        error:
-          "Couldn't save image " + name + ' from chapter ' + chapter.id + ' of media ' + comic_id,
-        status: 500,
-      };
+    const {uri} = await saveImage('chapter', comic_id + ' ' + i, im);
 
     images.push({
       h,
       w,
       name,
-      url: image,
+      uri,
     });
   }
 
   const newCh: Chapter = {
-    ...ch,
+    ...chap,
     images,
   };
   await setChapter(comic_id, chapter_id, newCh);

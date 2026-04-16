@@ -180,7 +180,6 @@ router.get(
   },
 );
 
-// TODO: replace with minIO
 router.get(
   '/comic/image/:id',
   validateData(comicIdValidationSchema, 'params'),

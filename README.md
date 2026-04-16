@@ -2,6 +2,7 @@
 
 - [Expressjs](https://expressjs.com)
 - [Mongodb](https://www.mongodb.com)
+- [Minio](https://docs.min.io)
 
 ## Getting started
 

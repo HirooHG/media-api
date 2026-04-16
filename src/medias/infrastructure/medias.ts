@@ -44,11 +44,11 @@ export const setMediaProp = async (id: number, prop: string, data: string | numb
   const obj: Document = {
     [prop]: data,
   };
-  return await medias.updateOne({comic_id: id}, {$set: obj});
+  return await medias.updateOne({id}, {$set: obj});
 };
 
 export const setMedia = async (id: number, obj: Media): Promise<Media | null> => {
-  return (await medias.findOneAndReplace({comic_id: id}, obj, {
+  return (await medias.findOneAndReplace({id}, obj, {
     projection: {_id: 0},
   })) as Media | null;
 };

@@ -158,35 +158,10 @@ export const getComickComicChapterDetails = async (
   return details.data;
 };
 
-// TODO: replace by minIO
 export const getComickImage = async (uri: string) => {
   const i = await ifetch(uri);
 
   if (!i.ok) throw Error(COMICK_ERROR);
 
   return await i.blob();
-};
-
-// TODO: replace by minIO
-export const saveImage = async (blob: Blob, id: number, uri: string) => {
-  const e = blob.type.split('/')[1];
-  const f = new File([blob], id + '.' + e);
-  const by = await f.bytes();
-  const u = id + '.' + e;
-
-  const pr = new Promise<boolean>((resolve, rejects) => {
-    fs.writeFile(uri + u, by, () => {
-      rejects(false);
-    });
-    resolve(true);
-  });
-  const res = await pr;
-  return {status: res, image: u};
-};
-
-// TODO: replace by minIO
-export const createDir = (dir: string, recursive: boolean = false) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, {recursive});
-  }
 };

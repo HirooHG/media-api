@@ -3,7 +3,7 @@ import {z} from 'zod';
 export const chapterComImageSchema = z.object({
   h: z.int(),
   w: z.int(),
-  name: z.string().optional(),
+  name: z.string(),
   url: z.string(),
 });
 
@@ -13,15 +13,20 @@ export const chapterComSchema = z.object({
   chap: z.string(),
   vol: z.string().optional().nullable(),
   title: z.string().nullable(),
-  group_name: z.string(),
+  group_name: z.array(z.string()),
   is_last_chapter: z.boolean().default(false),
 });
 
-export const chapterComWithImagesSchema = chapterComSchema.and(
-  z.object({
-    images: z.array(chapterComImageSchema),
-  }),
-);
+export const chapterComWithImagesSchema = z.object({
+  id: z.number(),
+  hid: z.string(),
+  chap: z.string(),
+  vol: z.string().optional().nullable(),
+  title: z.string().nullable(),
+  group_name: z.string(),
+  is_last_chapter: z.boolean().default(false),
+  images: z.array(chapterComImageSchema),
+});
 
 export type ChapterComWithImagesDto = z.infer<typeof chapterComWithImagesSchema>;
 export type ChapterComImageDto = z.infer<typeof chapterComImageSchema>;
