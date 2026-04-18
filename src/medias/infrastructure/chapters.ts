@@ -2,8 +2,8 @@ import type {Document} from 'mongodb';
 import type {Chapter} from '../models/domain/chapter';
 import {chapters} from '../../infrastructure/mongo';
 
-export const getMediaChapters = async (comic_id: number): Promise<Chapter[]> => {
-  return (await chapters.find({comic_id}).project({_id: 0}).toArray()) as Chapter[];
+export const getMediaChapters = async (media_id: number): Promise<Chapter[]> => {
+  return (await chapters.find({comic_id: media_id}).project({_id: 0}).toArray()) as Chapter[];
 };
 
 export const getMediaChapter = async (

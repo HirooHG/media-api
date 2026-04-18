@@ -21,9 +21,7 @@ export const refreshComickFollows = async (
     return obj.data as MediaComDto;
   });
 
-  const dtos = mm.filter(
-    (me: MediaComDto) => !em.some((eme: Media) => me.comic_id === eme.comic_id),
-  );
+  const dtos = mm.filter((me: MediaComDto) => !em.some((eme: Media) => me.comic_id === eme.id));
 
   if (dtos.length === 0) return await getAllComics(page, per_page, status);
 

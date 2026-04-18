@@ -4,7 +4,6 @@
 import type {Chapter} from '../../models/domain/chapter';
 
 import {parse} from 'node-html-parser';
-import fs from 'fs';
 
 import {cfetch, ifetch} from './requests';
 

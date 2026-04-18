@@ -7,13 +7,10 @@ import {ObjectId} from 'mongodb';
 import {chapterComSchema} from '../../models/responses/com/chapter-com-schema';
 
 export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiError> => {
-  const c = await getMedia({comic_id: id});
+  const c = await getMedia({id});
   if (c === null) return {error: "Couldn't find the media", status: 404};
 
-  const [ecs, chs] = await Promise.all([
-    getMediaChapters(c.comic_id),
-    getComickComicChapters(c.comic_slug),
-  ]);
+  const [ecs, chs] = await Promise.all([getMediaChapters(c.id), getComickComicChapters(c.slug)]);
   const chapsToAdd = chs.filter((ch) => !ecs.some((ech) => ech.id === ch.id));
   if (chapsToAdd.length === 0) return ecs;
 
@@ -30,7 +27,7 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
       chap: cha.chap,
       title: cha.title,
       translator: cha.group_name.at(0),
-      comic_id: c.comic_id,
+      comic_id: c.id,
       images: [],
     };
     return chap;

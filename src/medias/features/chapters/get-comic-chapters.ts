@@ -4,7 +4,7 @@ import {getMedia} from '../../infrastructure/medias';
 import type {Chapter} from '../../models/domain/chapter';
 
 export const getComicChapters = async (id: number): Promise<Chapter[] | ApiError> => {
-  const m = await getMedia({comic_id: id});
+  const m = await getMedia({id});
   if (m === null) return {error: "Couldn't find the media", status: 404};
 
   return await getMediaChapters(id);

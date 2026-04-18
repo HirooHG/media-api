@@ -16,11 +16,11 @@ export const getComicChapterDetails = async (
   // A chapter probably won't be updated, probability close to 0
   if (chap.images.length !== 0) return chap;
 
-  const media = await getMedia({comic_id});
+  const media = await getMedia({id: comic_id});
 
   if (!media) return {error: "Couldn't find the media", status: 404};
 
-  const chapterDetails = await getComickComicChapterDetails(media.comic_slug, chap);
+  const chapterDetails = await getComickComicChapterDetails(media.slug, chap);
 
   if (!chapterDetails) return {error: "Couldn't fetch chapter details", status: 500};
 

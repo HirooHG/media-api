@@ -18,7 +18,7 @@ export const getComicImage = async (id: number): Promise<MediaImage | ApiError> 
     media_id: id,
     uri,
   };
-  const res = await setMediaProp(m.comic_id, 'image', image);
+  const res = await setMediaProp(m.id, 'image', image);
   if (!res) return {error: "Couldn't persist the media image", status: 500};
 
   return image;
