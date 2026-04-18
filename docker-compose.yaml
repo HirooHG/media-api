@@ -7,19 +7,6 @@ services:
       - 27017:27017
     volumes:
       - db:/data/db
-  minio:
-    image: quay.io/minio/minio
-    container_name: medias-minio
-    restart: unless-stopped
-    command: server /data --console-address ":9001"
-    ports:
-      - 9000:9000
-      - 9001:9001
-    volumes:
-      - medias:/data
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
 
 networks:
   default:
@@ -27,7 +14,4 @@ networks:
 
 volumes:
   db:
-    name: local_mongo
-    external: true
-  medias:
-    name: medias_s3
+    name: medias_db
