@@ -24,12 +24,24 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
 
     const {data: cha} = parse;
     const chap: Chapter = {
-      ...cha,
       _id: new ObjectId(),
+      id: cha.id,
+      hid: cha.hid,
+      chap: cha.chap,
+      title: cha.title,
+      translator: cha.group_name.at(0),
       comic_id: c.comic_id,
       images: [],
     };
     return chap;
+  });
+
+  newChs.forEach((v) => {
+    const prev = newChs.find((n) => n.chap === v.chap - 1 && n.translator === v.translator)?.id;
+    const next = newChs.find((n) => n.chap === v.chap + 1 && n.translator === v.translator)?.id;
+
+    v.prev_chap = prev;
+    v.next_chap = next;
   });
 
   const ak = await insertManyChapters(newChs);

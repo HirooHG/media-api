@@ -26,13 +26,11 @@ export const getComicChapterDetails = async (
 
   const {chapter} = chapterDetails;
 
-  console.log(chapter);
-
   const images: ChapterImage[] = [];
   for (let i = 0; i < chapter.images.length; i++) {
     const {url, name, h, w} = chapter.images[i]!;
     const im = await getComickImage(url);
-    const {uri} = await saveImage('chapter', comic_id + ' ' + i, im);
+    const {uri} = await saveImage('chapter', comic_id + '/' + chapter_id + '/' + i, im);
 
     images.push({
       h,
