@@ -13,7 +13,6 @@ import {
   chapterComDetailsSchema,
   type ChapterComDetailsDto,
 } from '../../models/responses/com/chapter-details';
-import {getAppAuth} from '../../infrastructure/app-auth';
 import {comChapterListResponse} from '../../models/responses/com/chapter-list';
 import {
   mediaDetailsComSchema,
@@ -21,6 +20,7 @@ import {
   type MediaDetailsComDto,
 } from '../../models/responses/com/media-com-schema';
 import type {ChapterComDto} from '../../models/responses/com/chapter-com-schema';
+import {getAppAuth} from '../../../apps/infrastructure/app-auth';
 
 const COMICK_ERROR = 'Error with fetch comick, renew the token maybe';
 
