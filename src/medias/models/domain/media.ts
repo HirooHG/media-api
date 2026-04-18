@@ -14,7 +14,6 @@ export interface Media extends WithId<Document> {
   hid?: string;
   country?: string;
   origination?: string;
-  chapter_count?: number;
   demographic_name?: string;
   description?: string;
   // computed

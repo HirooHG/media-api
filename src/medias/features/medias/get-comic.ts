@@ -19,9 +19,12 @@ export const getComic = async (id: number): Promise<Media | ApiError> => {
 
   const {data} = mediaDetails;
   const newMedia: Media = {
-    description: data.desc,
     ...media,
-    ...data,
+    hid: data.hid,
+    country: data.country,
+    description: data.desc,
+    demographic_name: data.demographic_name,
+    origination: data.origination,
   };
 
   newMedia.detailled = true;

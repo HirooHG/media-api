@@ -22,10 +22,8 @@ export const mediaDetailsComSchema = z.object({
   hid: z.string(),
   country: z.string().optional(),
   origination: z.string().optional(),
-  chapter_count: z.number().optional(),
   demographic_name: z.string().optional(),
   desc: z.string().optional(),
-  content_rating: z.string().optional(),
 });
 
 export type MediaReadingState = z.infer<typeof mediaReadingStateSchema>;

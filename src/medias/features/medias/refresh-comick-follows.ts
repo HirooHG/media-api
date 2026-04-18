@@ -28,15 +28,19 @@ export const refreshComickFollows = async (
   if (dtos.length === 0) return await getAllComics(page, per_page, status);
 
   const c = await insertManyMedias(
-    dtos.map((v: MediaComDto) => ({
-      ...v,
-      _id: new ObjectId(),
-      id: v.comic_id,
-      detailled: false,
-      title: v.comic_title,
-      slug: v.comic_slug,
-      status: v.comic_status,
-    })),
+    dtos.map(
+      (v: MediaComDto) =>
+        ({
+          _id: new ObjectId(),
+          id: v.comic_id,
+          detailled: false,
+          title: v.comic_title,
+          slug: v.comic_slug,
+          status: v.comic_status,
+          type: v.type,
+          default_thumbnail: v.default_thumbnail,
+        }) satisfies Media,
+    ),
   );
   if (c !== dtos.length)
     return {error: 'Inserted ' + c + ' comic, expected ' + dtos.length, status: 500};

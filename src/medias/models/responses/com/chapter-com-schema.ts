@@ -10,7 +10,7 @@ export const chapterComImageSchema = z.object({
 export const chapterComSchema = z.object({
   id: z.number(),
   hid: z.string(),
-  chap: z.string(),
+  chap: z.coerce.number<number>(),
   vol: z.string().optional().nullable(),
   title: z.string().nullable(),
   group_name: z.array(z.string()),
@@ -20,7 +20,7 @@ export const chapterComSchema = z.object({
 export const chapterComWithImagesSchema = z.object({
   id: z.number(),
   hid: z.string(),
-  chap: z.string(),
+  chap: z.coerce.number<number>(),
   vol: z.string().optional().nullable(),
   title: z.string().nullable(),
   group_name: z.string(),
