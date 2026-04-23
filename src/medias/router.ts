@@ -17,10 +17,11 @@ import {
   comicIdAndChapterIdValidationSchema,
   comicIdValidationSchema,
 } from './models/schemas/comic-id-validation-schema';
+import {keycloakConfig} from '../auth/utils/keycloak-config';
 
 const router = express.Router();
 
-router.use(auth);
+router.use(keycloakConfig.protect());
 
 router.get('/', validateData(paginationWithStatusSchema, 'query'), async (req, res) => {
   let data: Media[] | null = null;

@@ -13,11 +13,13 @@
     "dev": "bun run --env-file=.env --watch src/main.ts"
   },
   "dependencies": {
+    "@types/express-session": "^1.19.0",
     "body-parser": "^2.2.2",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "helmet": "^8.1.0",
     "jose": "^6.2.2",
     "jsonwebtoken": "^9.0.3",

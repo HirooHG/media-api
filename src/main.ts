@@ -4,6 +4,7 @@ import cors from 'cors';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
+import session from 'express-session';
 
 import {initClient, closeClient} from './infrastructure/mongo';
 import {initComAuth} from './apps/features/init-apps-auth';
@@ -12,6 +13,7 @@ import authRouter from './auth/router';
 import appsRouter from './apps/router';
 import {initAuth} from './auth/features/init-auth';
 import {initMinio} from './infrastructure/minio';
+import {memoryStore, keycloakConfig} from './auth/utils/keycloak-config';
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';
@@ -27,6 +29,16 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(compression());
+app.use(
+  session({
+    secret: 'mySecret',
+    resave: false,
+    saveUninitialized: true,
+    store: memoryStore,
+  }),
+);
+app.use(keycloakConfig.middleware());
+app.set('trust proxy', env === 'production');
 app.use(
   helmet({crossOriginResourcePolicy: {policy: env === 'production' ? 'same-origin' : 'same-site'}}),
 );
