@@ -11,7 +11,6 @@ import {initComAuth} from './apps/features/init-apps-auth';
 import mediasRouter from './medias/router';
 import authRouter from './auth/router';
 import appsRouter from './apps/router';
-import {initAuth} from './auth/features/init-auth';
 import {initMinio} from './infrastructure/minio';
 import {memoryStore, keycloakConfig} from './auth/utils/keycloak-config';
 
@@ -54,7 +53,7 @@ const server = app.listen(port, async () => {
   try {
     await initClient();
 
-    await Promise.all([initAuth(), initComAuth(), initMinio()]);
+    await Promise.all([initComAuth(), initMinio()]);
 
     console.log('client initialized');
     console.log('server running on port ' + port);

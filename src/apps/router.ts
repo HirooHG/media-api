@@ -1,13 +1,12 @@
 import {Router} from 'express';
-import {adminOnly, auth} from '../auth/middlewares/auth-middleware';
 import {validateData} from '../auth/middlewares/validation';
 import {appAuthSchema} from './types/schemas/app-auth-schema';
 import {replaceAppToken} from './features/set-app-auth';
+import {keycloakConfig} from '../auth/utils/keycloak-config';
 
 const router = Router();
 
-router.use(auth);
-router.use(adminOnly);
+router.use(keycloakConfig.protect('admin'));
 
 router.put('/token', validateData(appAuthSchema, 'body'), async (req, res) => {
   const schema = appAuthSchema.parse(req.body);

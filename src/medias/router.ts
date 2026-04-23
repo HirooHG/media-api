@@ -3,7 +3,6 @@ import express from 'express';
 import type {Media} from './models/domain/media';
 import type {MediaImage} from './models/domain/media-image';
 import type {Chapter} from './models/domain/chapter';
-import {auth} from '../auth/middlewares/auth-middleware';
 import {getAllComics} from './features/medias/get-all-comics';
 import {getComic} from './features/medias/get-comic';
 import {refreshComickFollows} from './features/medias/refresh-comick-follows';

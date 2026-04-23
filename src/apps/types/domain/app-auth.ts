@@ -1,5 +1,5 @@
 import type {Document, WithId} from 'mongodb';
-import type {AuthType} from '../schemas/app-auth';
+import type {AuthType} from '../schemas/app-auth-schema';
 
 export interface AppAuth extends WithId<Document> {
   type: AuthType;
