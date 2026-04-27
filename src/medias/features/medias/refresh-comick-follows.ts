@@ -5,12 +5,13 @@ import type {Media} from '../../models/domain/media';
 import {getAllComics} from './get-all-comics';
 import {ObjectId} from 'mongodb';
 import {mediaComSchema, type MediaComDto} from '../../models/responses/com/media-com-schema';
+import type {GetAllMediasResult} from '../../models/result/get-all-medias-result';
 
 export const refreshComickFollows = async (
   page: number,
   per_page: number,
   status: number | null,
-): Promise<Media[] | ApiError> => {
+): Promise<GetAllMediasResult | ApiError> => {
   const [em, m] = await Promise.all([getMedias(), getComickFollows()]);
 
   const mm = m.map((v) => {

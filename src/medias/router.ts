@@ -17,13 +17,14 @@ import {
   comicIdValidationSchema,
 } from './models/schemas/comic-id-validation-schema';
 import {keycloakConfig} from '../auth/utils/keycloak-config';
+import type {GetAllMediasResult} from './models/result/get-all-medias-result';
 
 const router = express.Router();
 
 router.use(keycloakConfig.protect());
 
 router.get('/', validateData(paginationWithStatusSchema, 'query'), async (req, res) => {
-  let data: Media[] | null = null;
+  let data: GetAllMediasResult | null = null;
   let error: string | null = null;
   let reqStatus = 200;
 
@@ -70,7 +71,7 @@ router.get('/comic/:id', validateData(comicIdValidationSchema, 'params'), async 
 
 router.post('/refresh', validateData(paginationWithStatusSchema, 'query'), async (req, res) => {
   let reqStatus = 200;
-  let data: Media[] | null = null;
+  let data: GetAllMediasResult | null = null;
   let error: string | null = null;
 
   const {page, per_page, status} = paginationWithStatusSchema.parse(req.query);

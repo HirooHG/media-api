@@ -3,6 +3,10 @@ import type {Media} from '../models/domain/media';
 import {medias} from '../../infrastructure/mongo';
 import type {PaginationDto} from '../models/schemas/pagination-schema';
 
+export const getCountMedias = async (): Promise<number> => {
+  return await medias.countDocuments();
+};
+
 export const getMedias = async (): Promise<Media[]> => {
   return (await medias.find().toArray()) as Media[];
 };
