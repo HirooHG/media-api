@@ -6,3 +6,6 @@ public/medias
 
 .env
 *.env*
+
+auth-keycloak/
+minio/
