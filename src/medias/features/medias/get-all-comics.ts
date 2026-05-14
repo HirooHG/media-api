@@ -17,7 +17,7 @@ export const getAllComics = async (
   return {
     medias,
     pagination: {
-      lastPage,
+      lastPage: lastPage === 0 ? 1 : lastPage,
     },
   };
 };
