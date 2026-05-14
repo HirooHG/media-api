@@ -13,11 +13,13 @@ import authRouter from './auth/router';
 import appsRouter from './apps/router';
 import {initMinio} from './infrastructure/minio';
 import {memoryStore, keycloakConfig} from './auth/utils/keycloak-config';
+import wsRouter from './ws/router';
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';
 
 const port = process.env.PORT ?? '3001';
+const ws = process.env.WS_PORT ?? '3002';
 const corsOpts = {
   origin,
   optionsSuccessStatus: 200,
@@ -26,11 +28,12 @@ const corsOpts = {
 const app = express();
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(compression());
 app.use(
   session({
-    secret: 'mySecret',
+    secret: process.env.KEYCLOAK_STORE_SECRET,
     resave: false,
     saveUninitialized: true,
     store: memoryStore,
@@ -48,14 +51,16 @@ app.disable('x-powered-by');
 app.use('/auth', authRouter);
 app.use('/media', mediasRouter);
 app.use('/apps', appsRouter);
+app.use('/wss', wsRouter);
 
 const server = app.listen(port, async () => {
   try {
     await initClient();
-
-    await Promise.all([initComAuth(), initMinio()]);
-
     console.log('client initialized');
+    await Promise.all([initComAuth(), initMinio()]);
+    console.log('minio initialized');
+
+    console.log('websocket running on port ' + ws);
     console.log('server running on port ' + port);
   } catch (err) {
     console.error('client failed to init: ' + err);

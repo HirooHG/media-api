@@ -33,7 +33,7 @@ router.get('/', validateData(paginationWithStatusSchema, 'query'), async (req, r
   try {
     data = await getAllComics(page, per_page, status);
   } catch (e) {
-    console.error(e);
+    console.log(e);
     reqStatus = 500;
     error = "Couldn't load comics";
   }
@@ -58,7 +58,7 @@ router.get('/comic/:id', validateData(comicIdValidationSchema, 'params'), async 
       error = comic.error;
     } else data = comic;
   } catch (e) {
-    console.error(e);
+    console.log(e);
     status = 500;
     error = "Couldn't load comic " + id;
   }
@@ -83,7 +83,7 @@ router.post('/refresh', validateData(paginationWithStatusSchema, 'query'), async
       error = comics.error;
     } else data = comics;
   } catch (e) {
-    console.error(e);
+    console.log(e);
     reqStatus = 500;
     error = "Couldn't refresh comics";
   }
@@ -111,7 +111,7 @@ router.get(
         error = chapters.error;
       } else data = chapters;
     } catch (e) {
-      console.error(e);
+      console.log(e);
       status = 500;
       error = "Couldn't load chapters";
     }
@@ -140,7 +140,7 @@ router.post(
         error = chapters.error;
       } else data = chapters;
     } catch (e) {
-      console.error(e);
+      console.log(e);
       status = 500;
       error = "Couldn't load chapters";
     }
@@ -169,7 +169,7 @@ router.get(
         error = chapter.error;
       } else data = chapter;
     } catch (e) {
-      console.error(e);
+      console.log(e);
       status = 500;
       error = "Couldn't load chapter";
     }
@@ -198,7 +198,7 @@ router.get(
         status = res.status;
       } else data = res;
     } catch (e) {
-      console.error(e);
+      console.log(e);
       status = 500;
       error = "Couldn't load comic image " + id;
     }

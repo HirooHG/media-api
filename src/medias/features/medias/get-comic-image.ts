@@ -6,12 +6,10 @@ import type {MediaImage} from '../../models/domain/media-image';
 
 export const getComicImage = async (id: number): Promise<MediaImage | ApiError> => {
   const m = await getMediaById(id);
-
   if (m === null) return {error: 'Media not found', status: 404};
   if (m.image) return m.image;
 
   const blob = await getComickImage(m.default_thumbnail);
-
   const {uri} = await saveImage('media', m.id.toString(), blob);
 
   const image: MediaImage = {

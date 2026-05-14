@@ -7,8 +7,8 @@ export const getCountMedias = async (): Promise<number> => {
   return await medias.countDocuments();
 };
 
-export const getMedias = async (): Promise<Media[]> => {
-  return (await medias.find().toArray()) as Media[];
+export const getMedias = async (doc?: Document): Promise<Media[]> => {
+  return (await medias.find(doc ?? {}).toArray()) as Media[];
 };
 
 export const getMediasPaginated = async ({

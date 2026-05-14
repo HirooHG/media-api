@@ -8,7 +8,7 @@ export const getAllComics = async (
   status: number | null,
 ): Promise<GetAllMediasResult> => {
   const doc: Filter<Document> | undefined =
-    status !== undefined && status !== null ? {comic_status: status} : undefined;
+    status !== undefined && status !== null ? {status: status} : undefined;
 
   const medias = await getMediasPaginated({doc, per_page, page});
   const count = await getCountMedias();

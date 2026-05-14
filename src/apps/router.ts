@@ -14,7 +14,7 @@ router.put('/token', validateData(appAuthSchema, 'body'), async (req, res) => {
   try {
     await replaceAppToken(schema);
   } catch (e) {
-    console.error(e);
+    console.log(e);
     res.status(500).json({error: e});
   }
 

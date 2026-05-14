@@ -6,7 +6,7 @@ const bucket = process.env.MINIO_BUCKET;
 const minio = new Client({
   endPoint: process.env.MINIO_ENDPOINT,
   port: Number(process.env.MINIO_PORT),
-  useSSL: true,
+  useSSL: process.env.MINIO_USESSL === 'true',
   accessKey: process.env.MINIO_ROOT_USER,
   secretKey: process.env.MINIO_ROOT_PASSWORD,
 });

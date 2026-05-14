@@ -8,8 +8,6 @@ services:
     volumes:
       - db:/data/db
   minio:
-    profiles:
-      - donotstart
     image: quay.io/minio/minio
     env_file:
       - .env
@@ -22,8 +20,6 @@ services:
     volumes:
       - minio:/data
   auth:
-    profiles:
-      - donotstart
     image: quay.io/keycloak/keycloak:latest
     container_name: auth
     env_file:
@@ -37,8 +33,6 @@ services:
     depends_on:
       - auth_db
   auth_db:
-    profiles:
-      - donotstart
     image: postgres:18-alpine
     container_name: auth_pg
     restart: unless-stopped
@@ -55,7 +49,8 @@ networks:
 
 volumes:
   db:
-    name: medias_db
+    # name: medias_db # prod volume
+    name: medias_db_dev # dev volume
   minio:
     name: medias_minio
   auth:

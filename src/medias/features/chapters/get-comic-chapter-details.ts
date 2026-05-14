@@ -7,30 +7,26 @@ import type {Chapter} from '../../models/domain/chapter';
 import type {ChapterImage} from '../../models/domain/chapter-image';
 
 export const getComicChapterDetails = async (
-  comic_id: number,
-  chapter_id: number,
+  mediaId: number,
+  chapterId: number,
 ): Promise<Chapter | ApiError> => {
-  const chap = await getMediaChapter(comic_id, chapter_id);
+  // INFO: A chapter probably won't be updated, probability close to 0
+  const chap = await getMediaChapter(mediaId, chapterId);
   if (!chap || chap === null) return {error: "Couldn't find the chapter", status: 404};
-
-  // A chapter probably won't be updated, probability close to 0
   if (chap.images.length !== 0) return chap;
 
-  const media = await getMedia({id: comic_id});
-
+  const media = await getMedia({id: mediaId});
   if (!media) return {error: "Couldn't find the media", status: 404};
 
   const chapterDetails = await getComickComicChapterDetails(media.slug, chap);
-
   if (!chapterDetails) return {error: "Couldn't fetch chapter details", status: 500};
 
   const {chapter} = chapterDetails;
-
   const images: ChapterImage[] = [];
   for (let i = 0; i < chapter.images.length; i++) {
     const {url, name, h, w} = chapter.images[i]!;
     const im = await getComickImage(url);
-    const {uri} = await saveImage('chapter', comic_id + '/' + chapter_id + '/' + i, im);
+    const {uri} = await saveImage('chapter', mediaId + '/' + chapterId + '/' + i, im);
 
     images.push({
       h,
@@ -44,7 +40,7 @@ export const getComicChapterDetails = async (
     ...chap,
     images,
   };
-  await setChapter(comic_id, chapter_id, newCh);
+  await setChapter(mediaId, chapterId, newCh);
 
   return newCh;
 };
