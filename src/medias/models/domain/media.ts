@@ -15,7 +15,7 @@ export interface Media extends WithId<Document> {
   country?: string;
   origination?: string;
   demographic_name?: string;
-  description?: string;
+  description?: string | null;
   // computed
   image?: MediaImage;
   detailled: boolean;

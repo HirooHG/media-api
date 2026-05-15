@@ -23,7 +23,7 @@ export const mediaDetailsComSchema = z.object({
   country: z.string().optional(),
   origination: z.string().optional(),
   demographic_name: z.string().optional(),
-  desc: z.string().optional(),
+  desc: z.string().optional().nullable(),
 });
 
 export type MediaReadingState = z.infer<typeof mediaReadingStateSchema>;
