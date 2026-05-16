@@ -34,8 +34,16 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
   });
 
   newChs.forEach((v) => {
-    const prev = newChs.find((n) => n.chap === v.chap - 1 && n.translator === v.translator)?.id;
-    const next = newChs.find((n) => n.chap === v.chap + 1 && n.translator === v.translator)?.id;
+    const prev = newChs.find((n) =>
+      !isNaN(Number(n.chap)) && !isNaN(Number(v.chap))
+        ? parseInt(n.chap) === parseInt(v.chap) - 1 && n.translator === v.translator
+        : false,
+    )?.id;
+    const next = newChs.find((n) =>
+      !isNaN(Number(n.chap)) && !isNaN(Number(v.chap))
+        ? parseInt(n.chap) === parseInt(v.chap) + 1 && n.translator === v.translator
+        : false,
+    )?.id;
 
     v.prev_chap = prev;
     v.next_chap = next;

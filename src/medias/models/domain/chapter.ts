@@ -5,7 +5,7 @@ export interface Chapter extends WithId<Document> {
   id: number;
   hid: string;
   comic_id: number;
-  chap: number;
+  chap: string;
   title: string | null;
   images: ChapterImage[];
   translator?: string;

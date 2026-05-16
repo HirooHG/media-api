@@ -25,6 +25,7 @@ export const getMediasPaginated = async ({
 
   let ms = medias
     .find(doc ?? {})
+    .sort('title', 1)
     .project({_id: 0, ...proj})
     .skip(pp * (p - 1))
     .limit(pp);
