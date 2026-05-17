@@ -8,17 +8,20 @@ import type {ChapterImage} from '../../models/domain/chapter-image';
 
 export const getComicChapterDetails = async (
   mediaId: number,
-  chapterId: number,
+  chapterHid: string, // hid
 ): Promise<Chapter | ApiError> => {
-  // INFO: A chapter probably won't be updated, probability close to 0
-  const chap = await getMediaChapter(mediaId, chapterId);
-  if (!chap || chap === null) return {error: "Couldn't find the chapter", status: 404};
-  if (chap.images.length !== 0) return chap;
-
   const media = await getMedia({id: mediaId});
   if (!media) return {error: "Couldn't find the media", status: 404};
 
-  const chapterDetails = await getComickComicChapterDetails(media.slug, chap);
+  // INFO: A chapter probably won't be updated, probability close to 0
+  const chap = await getMediaChapter(mediaId, chapterHid);
+  if (!chap || chap === null) return {error: "Couldn't find the chapter", status: 404};
+
+  const version = chap.versions.find((v) => v.hid === chapterHid);
+  if (!version) return {error: "Couldn't fetch chapter details", status: 404};
+  if (version.images.length !== 0) return chap;
+
+  const chapterDetails = await getComickComicChapterDetails(media.slug, chap, version.hid);
   if (!chapterDetails) return {error: "Couldn't fetch chapter details", status: 500};
 
   const {chapter} = chapterDetails;
@@ -26,7 +29,7 @@ export const getComicChapterDetails = async (
   for (let i = 0; i < chapter.images.length; i++) {
     const {url, name, h, w} = chapter.images[i]!;
     const im = await getComickImage(url);
-    const {uri} = await saveImage('chapter', mediaId + '/' + chapterId + '/' + i, im);
+    const {uri} = await saveImage('chapter', mediaId + '/' + chapterHid + '/' + i, im);
 
     images.push({
       h,
@@ -36,11 +39,8 @@ export const getComicChapterDetails = async (
     });
   }
 
-  const newCh: Chapter = {
-    ...chap,
-    images,
-  };
-  await setChapter(mediaId, chapterId, newCh);
+  version.images = images;
+  await setChapter(mediaId, chap.id, chap);
 
-  return newCh;
+  return chap;
 };

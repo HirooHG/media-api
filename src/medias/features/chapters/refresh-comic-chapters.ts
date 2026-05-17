@@ -14,39 +14,54 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
   const chapsToAdd = chs.filter((ch) => !ecs.some((ech) => ech.id === ch.id));
   if (chapsToAdd.length === 0) return ecs;
 
-  const newChs = chapsToAdd.map((v) => {
+  const newChs: Chapter[] = [];
+  for (const v of chapsToAdd) {
     const parse = chapterComSchema.safeParse(v);
-
     if (!parse.success) throw new Error('Failed to parse chapter: ' + parse.error);
-
     const {data: cha} = parse;
-    const chap: Chapter = {
-      _id: new ObjectId(),
-      id: cha.id,
-      hid: cha.hid,
-      chap: cha.chap,
-      title: cha.title,
-      translator: cha.group_name.at(0),
-      comic_id: c.id,
-      images: [],
-    };
-    return chap;
-  });
 
-  newChs.forEach((v) => {
-    const prev = newChs.find((n) =>
-      !isNaN(Number(n.chap)) && !isNaN(Number(v.chap))
-        ? parseInt(n.chap) === parseInt(v.chap) - 1 && n.translator === v.translator
-        : false,
-    )?.id;
-    const next = newChs.find((n) =>
-      !isNaN(Number(n.chap)) && !isNaN(Number(v.chap))
-        ? parseInt(n.chap) === parseInt(v.chap) + 1 && n.translator === v.translator
-        : false,
-    )?.id;
+    const existingChap = newChs.find((c) => c.chap === cha.chap);
 
-    v.prev_chap = prev;
-    v.next_chap = next;
+    if (!existingChap)
+      newChs.push({
+        _id: new ObjectId(),
+        id: cha.id,
+        chap: cha.chap,
+        comic_id: c.id,
+        versions: [
+          {
+            hid: cha.hid,
+            title: cha.title,
+            translator: cha.group_name.at(0),
+            images: [],
+          },
+        ],
+      } satisfies Chapter);
+    else
+      existingChap.versions.push({
+        hid: cha.hid,
+        title: cha.title,
+        translator: cha.group_name.at(0),
+        images: [],
+      });
+  }
+
+  newChs.forEach((a) => {
+    a.versions.forEach((v) => {
+      const prev = newChs.find((n) =>
+        !isNaN(Number(n.chap)) && !isNaN(Number(n.chap))
+          ? parseInt(n.chap) === parseInt(n.chap) - 1
+          : false,
+      );
+      const next = newChs.find((n) =>
+        !isNaN(Number(n.chap)) && !isNaN(Number(n.chap))
+          ? parseInt(n.chap) === parseInt(n.chap) + 1
+          : false,
+      );
+
+      v.prev_chap = prev?.versions.find((n) => n.translator === v.translator)?.hid;
+      v.next_chap = next?.versions.find((n) => n.translator === v.translator)?.hid;
+    });
   });
 
   const ak = await insertManyChapters(newChs);

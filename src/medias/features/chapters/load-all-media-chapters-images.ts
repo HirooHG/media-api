@@ -7,7 +7,9 @@ export const loadAllMediaChaptersImages = async (mediaId: number) => {
 
   for (let i = 0; i < chapters.length; i++) {
     const chap = chapters[i]!;
-    const details = await getComicChapterDetails(mediaId, chap.id);
+    const details = await Promise.all(
+      chap.versions.map((v) => getComicChapterDetails(mediaId, v.hid)),
+    );
     if ('error' in details)
       throw new Error(
         `Could not fetch images of media ${mediaId} and chapter: ${chap.id}, fetched ${i + 1} chapters`,

@@ -130,6 +130,7 @@ export const getComickComicDetails = async (slug: string): Promise<MediaDetailsC
 export const getComickComicChapterDetails = async (
   slug: string,
   chapter: Chapter,
+  chapterHid: string,
 ): Promise<ChapterComDetailsDto> => {
   const creds = await getAppAuth({domain: COM_DOMAIN});
 
@@ -137,7 +138,7 @@ export const getComickComicChapterDetails = async (
 
   const {token} = creds;
 
-  const url = COM_URI + '/comic/' + slug + '/' + chapter.hid + '-chapter-' + chapter.chap + '-en';
+  const url = COM_URI + '/comic/' + slug + '/' + chapterHid + '-chapter-' + chapter.chap + '-en';
   const res = await cfetch(token, url);
 
   if (!res.ok) throw Error(COMICK_ERROR);

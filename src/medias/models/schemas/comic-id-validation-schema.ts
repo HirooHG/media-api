@@ -6,6 +6,6 @@ export const comicIdValidationSchema = z.object({
 
 export const comicIdAndChapterIdValidationSchema = comicIdValidationSchema.and(
   z.object({
-    chapterId: z.coerce.number().int().min(0),
+    chapterHid: z.string().nonempty(),
   }),
 );

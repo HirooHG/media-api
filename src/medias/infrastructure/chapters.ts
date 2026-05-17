@@ -7,10 +7,13 @@ export const getMediaChapters = async (media_id: number): Promise<Chapter[]> => 
 };
 
 export const getMediaChapter = async (
-  comic_id: number,
-  chapter_id: number,
+  mediaId: number,
+  chapterHid: string,
 ): Promise<Chapter | null> => {
-  return await chapters.findOne<Chapter>({id: chapter_id, comic_id}, {projection: {_id: 0}});
+  return await chapters.findOne<Chapter>(
+    {'versions.hid': chapterHid, comic_id: mediaId},
+    {projection: {_id: 0}},
+  );
 };
 
 export const insertManyChapters = async (chs: Chapter[]) => {
@@ -25,11 +28,11 @@ export const setChapterProp = async (id: number, prop: string, data: object) => 
 };
 
 export const setChapter = async (
-  comic_id: number,
-  chapter_id: number,
+  mediaId: number,
+  chapterId: number,
   obj: Chapter,
 ): Promise<Chapter | null> => {
-  return (await chapters.findOneAndReplace({comic_id, id: chapter_id}, obj, {
+  return (await chapters.findOneAndReplace({comic_id: mediaId, id: chapterId}, obj, {
     projection: {_id: 0},
   })) as Chapter | null;
 };

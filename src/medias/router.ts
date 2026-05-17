@@ -153,17 +153,17 @@ router.post(
 );
 
 router.get(
-  '/comic/:id/chapter/:chapterId',
+  '/comic/:id/chapter/:chapterHid',
   validateData(comicIdAndChapterIdValidationSchema, 'params'),
   async (req, res) => {
     let status = 200;
     let data: Chapter | null = null;
     let error: string | null = null;
 
-    const {id, chapterId} = comicIdAndChapterIdValidationSchema.parse(req.params);
+    const {id, chapterHid} = comicIdAndChapterIdValidationSchema.parse(req.params);
 
     try {
-      const chapter = await getComicChapterDetails(id, chapterId);
+      const chapter = await getComicChapterDetails(id, chapterHid);
       if ('error' in chapter) {
         status = chapter.status;
         error = chapter.error;
