@@ -18,6 +18,8 @@ import {
 } from './models/schemas/comic-id-validation-schema';
 import {keycloakConfig} from '../auth/utils/keycloak-config';
 import type {GetAllMediasResult} from './models/result/get-all-medias-result';
+import {filterSchema} from './models/schemas/filter-schema';
+import {searchMedias} from './features/medias/search-medias';
 
 const router = express.Router();
 
@@ -209,5 +211,26 @@ router.get(
     });
   },
 );
+
+router.post('/search', validateData(filterSchema, 'body'), async (req, res) => {
+  let status = 200;
+  let data: Media[] | null = null;
+  let error: string | null = null;
+
+  const {filter} = filterSchema.parse(req.body);
+
+  try {
+    data = await searchMedias(filter);
+  } catch (e) {
+    console.log(e);
+    status = 500;
+    error = "Couldn't search medias";
+  }
+
+  res.status(status).send({
+    data,
+    error,
+  });
+});
 
 export default router;

@@ -12,17 +12,14 @@ export const getMedias = async (doc?: Document): Promise<Media[]> => {
 };
 
 export const getMediasPaginated = async ({
-  page,
-  per_page,
+  page: p,
+  per_page: pp,
   doc,
   proj,
 }: {
   doc?: Filter<Document> | undefined;
   proj?: Document;
 } & PaginationDto): Promise<Media[]> => {
-  const pp = per_page ?? 5;
-  const p = page ?? 1;
-
   let ms = medias
     .find(doc ?? {})
     .sort('title', 1)
