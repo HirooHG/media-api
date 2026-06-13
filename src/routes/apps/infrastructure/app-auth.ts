@@ -1,5 +1,5 @@
 import type {Document, Filter} from 'mongodb';
-import {app_auth} from '../../infrastructure/mongo';
+import {app_auth} from '../../../infrastructure/mongo';
 import type {AppAuth} from '../types/domain/app-auth';
 import type {AppAuthDto} from '../types/schemas/app-auth-schema';
 

@@ -1,4 +1,4 @@
-import {api_auth} from '../infrastructure/mongo';
+import {api_auth} from '../../infrastructure/mongo';
 import type {User} from './models/domain/user';
 
 export const setUser = async (user: User) => {

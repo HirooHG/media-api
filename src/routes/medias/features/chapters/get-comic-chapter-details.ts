@@ -1,5 +1,5 @@
-import {saveImage} from '../../../infrastructure/minio';
-import type {ApiError} from '../../../models/api-error';
+import {saveImage} from '../../../../infrastructure/minio';
+import type {ApiError} from '../../../../models/api-error';
 import {getComickComicChapterDetails, getComickImage} from '../../application/com/application';
 import {getMediaChapter, setChapter} from '../../infrastructure/chapters';
 import {getMedia} from '../../infrastructure/medias';

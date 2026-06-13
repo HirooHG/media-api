@@ -1,4 +1,3 @@
-import type {ApiError} from '../../../models/api-error';
 import {getComickFollows} from '../../application/com/application';
 import {getMedias, insertManyMedias} from '../../infrastructure/medias';
 import type {Media} from '../../models/domain/media';
@@ -6,6 +5,7 @@ import {getAllComics} from './get-all-comics';
 import {ObjectId} from 'mongodb';
 import {mediaComSchema, type MediaComDto} from '../../models/responses/com/media-com-schema';
 import type {GetAllMediasResult} from '../../models/result/get-all-medias-result';
+import type {ApiError} from '../../../../models/api-error';
 
 export const refreshComickFollows = async (
   page: number,

@@ -1,4 +1,4 @@
-import type {ApiError} from '../../../models/api-error';
+import type {ApiError} from '../../../../models/api-error';
 import {getMediaChapters} from '../../infrastructure/chapters';
 import {getMedia} from '../../infrastructure/medias';
 import type {Chapter} from '../../models/domain/chapter';

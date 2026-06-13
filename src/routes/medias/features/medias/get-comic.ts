@@ -1,4 +1,4 @@
-import type {ApiError} from '../../../models/api-error';
+import type {ApiError} from '../../../../models/api-error';
 import {getComickComicDetails} from '../../application/com/application';
 import {getMedia, setMedia} from '../../infrastructure/medias';
 import type {Media} from '../../models/domain/media';

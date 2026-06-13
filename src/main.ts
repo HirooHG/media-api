@@ -7,12 +7,12 @@ import bodyParser from 'body-parser';
 import session from 'express-session';
 
 import {initClient, closeClient} from './infrastructure/mongo';
-import {initComAuth} from './apps/features/init-apps-auth';
-import mediasRouter from './medias/router';
-import authRouter from './auth/router';
-import appsRouter from './apps/router';
+import {initComAuth} from './routes/apps/features/init-apps-auth';
+import mediasRouter from './routes/medias/router';
+import authRouter from './routes/auth/router';
+import appsRouter from './routes/apps/router';
 import {initMinio} from './infrastructure/minio';
-import {memoryStore, keycloakConfig} from './auth/utils/keycloak-config';
+import {memoryStore, keycloakConfig} from './routes/auth/utils/keycloak-config';
 import wsRouter from './ws/router';
 
 const env = process.env.NODE_ENV ?? 'dev';

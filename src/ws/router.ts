@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {keycloakConfig} from '../auth/utils/keycloak-config';
+import {keycloakConfig} from '../routes/auth/utils/keycloak-config';
 import './infrastructure/listener';
 import {genTicket} from './features/gen-ticket';
 
