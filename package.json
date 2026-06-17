@@ -1,6 +1,6 @@
 {
   "name": "media-api",
-  "version": "1.8.0",
+  "version": "1.10.0",
   "description": "media sync (manga, manhwa, anime, ...)",
   "keywords": [
     "manga"
@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@types/express-session": "^1.19.0",
-    "body-parser": "^2.2.2",
+    "body-parser": "^2.3.0",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
