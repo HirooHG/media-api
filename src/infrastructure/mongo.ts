@@ -12,6 +12,7 @@ export const api_auth = db.collection('api-auths');
 export const app_auth = db.collection('app-auths');
 export const chapters = db.collection('chapters');
 export const medias = db.collection('media');
+export const bookmarks = db.collection('bookmarks');
 export const tickets = db.collection('tickets');
 
 /// Client

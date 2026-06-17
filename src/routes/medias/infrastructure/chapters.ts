@@ -16,6 +16,10 @@ export const getMediaChapter = async (
   );
 };
 
+export const getChapterById = async (id: number) => {
+  return (await chapters.findOne({id})) as Chapter | null;
+};
+
 export const insertManyChapters = async (chs: Chapter[]) => {
   return (await chapters.insertMany(chs)).acknowledged;
 };

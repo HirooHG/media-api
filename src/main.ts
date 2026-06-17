@@ -11,6 +11,7 @@ import {initComAuth} from './routes/apps/features/init-apps-auth';
 import mediasRouter from './routes/medias/router';
 import authRouter from './routes/auth/router';
 import appsRouter from './routes/apps/router';
+import bookmarkRouter from './routes/bookmarks/router';
 import {initMinio} from './infrastructure/minio';
 import {memoryStore, keycloakConfig} from './routes/auth/utils/keycloak-config';
 import wsRouter from './ws/router';
@@ -52,6 +53,7 @@ app.use('/auth', authRouter);
 app.use('/media', mediasRouter);
 app.use('/apps', appsRouter);
 app.use('/wss', wsRouter);
+app.use('/bookmark', bookmarkRouter);
 
 const server = app.listen(port, async () => {
   try {
