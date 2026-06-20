@@ -54,4 +54,5 @@ volumes:
   minio:
     name: medias_minio
   auth:
-    name: medias_auth
+    name: kc_auth
+    external: true
