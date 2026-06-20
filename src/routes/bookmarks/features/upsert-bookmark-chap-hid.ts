@@ -36,13 +36,6 @@ export const upsertBookmarkChapHid = async (
     mediaId,
     chapterId: chapter.id,
   };
-  const res = await updateBookmarkChapterId(bookmark);
-
-  if (!res) {
-    return {
-      status: 500,
-      error: 'Could not upsert bookmark',
-    };
-  }
+  await updateBookmarkChapterId(bookmark);
   return bookmark;
 };

@@ -9,7 +9,6 @@ import {chapterComSchema} from '../../models/responses/com/chapter-com-schema';
 const setPreviousNextChapters = (a: Chapter, chaps: Chapter[]) => {
   const chapStr = a.chap;
   if (isNaN(Number(chapStr))) {
-    console.log('[INFO] Not a number: ', chapStr);
     return;
   }
   const chap = parseInt(chapStr);
@@ -35,7 +34,6 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
   const chapsToAdd = chs.filter(
     (ch) => !ecs.some((ech) => !ech.versions.some((v) => v.hid === ch.hid)),
   );
-  console.log(chapsToAdd.map((c) => c.hid));
   if (chapsToAdd.length === 0) return ecs;
 
   const newChs: Chapter[] = [];
@@ -46,7 +44,6 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
 
     const newExistingChap = newChs.find((c) => c.chap === cha.chap);
     if (newExistingChap) {
-      console.log('new existing', newExistingChap.id);
       newExistingChap.versions.push({
         hid: cha.hid,
         title: cha.title,
@@ -60,7 +57,6 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
       (c) => c.chap === v.chap && !c.versions.some((v) => v.hid === v.hid),
     );
     if (existingChap) {
-      console.log('existing', existingChap.id);
       existingChap.versions.push({
         hid: cha.hid,
         title: cha.title,
@@ -73,7 +69,6 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
       continue;
     }
 
-    console.log('new', cha.id);
     newChs.push({
       _id: new ObjectId(),
       id: cha.id,
