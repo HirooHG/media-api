@@ -1,7 +1,7 @@
-import type {ApiError} from '../../../../models/api-error';
-import {getMediaChapters} from '../../infrastructure/chapters';
-import {getMedia} from '../../infrastructure/medias';
-import type {Chapter} from '../../models/domain/chapter';
+import type {ApiError} from '@/core/types/api-error';
+import {getMedia} from '@/routes/medias/infrastructure/medias';
+import {getMediaChapters} from '../infrastructure/chapters';
+import type {Chapter} from '../types/domain/chapter';
 
 export const getComicChapters = async (id: number): Promise<Chapter[] | ApiError> => {
   const m = await getMedia({id});

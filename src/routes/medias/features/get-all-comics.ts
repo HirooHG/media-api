@@ -1,6 +1,6 @@
 import type {Document, Filter} from 'mongodb';
-import {getCountMedias, getMediasPaginated} from '../../infrastructure/medias';
-import type {GetAllMediasResult} from '../../models/result/get-all-medias-result';
+import type {GetAllMediasResult} from '../models/result/get-all-medias-result';
+import {getMediasPaginated, getCountMedias} from '../infrastructure/medias';
 
 export const getAllComics = async (
   page: number,

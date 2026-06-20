@@ -1,8 +1,8 @@
 import {Router} from 'express';
-import {validateData} from '../auth/middlewares/validation';
 import {appAuthSchema} from './types/schemas/app-auth-schema';
 import {replaceAppToken} from './features/set-app-auth';
 import {keycloakConfig} from '../auth/utils/keycloak-config';
+import {validateData} from '@/core/middlewares/validation';
 
 const router = Router();
 

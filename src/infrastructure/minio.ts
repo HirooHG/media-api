@@ -1,5 +1,6 @@
 import type {ItemBucketMetadata} from 'minio';
 import {Client} from 'minio';
+import {Blob} from 'node:buffer';
 
 const bucket = process.env.MINIO_BUCKET;
 

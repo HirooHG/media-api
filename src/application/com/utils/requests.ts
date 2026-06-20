@@ -1,4 +1,4 @@
-import {COM_URI} from '../../constants';
+import {COM_URI} from '@/core/constants';
 
 export const ifetch = async (uri: string) => {
   return await fetch(uri, {

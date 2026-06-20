@@ -1,10 +1,9 @@
-import type {ApiError} from '../../../../models/api-error';
-import {getComickComicChapters} from '../../application/com/application';
-import {getMediaChapters, insertManyChapters, setChapter} from '../../infrastructure/chapters';
-import {getMedia} from '../../infrastructure/medias';
-import type {Chapter} from '../../models/domain/chapter';
+import type {ApiError} from '@/core/types/api-error';
 import {ObjectId} from 'mongodb';
-import {chapterComSchema} from '../../models/responses/com/chapter-com-schema';
+import {getComickComicChapters} from '@/application/com/features/get-chapters';
+import type {Chapter} from '../types/domain/chapter';
+import {getMedia} from '@/routes/medias/infrastructure/medias';
+import {getMediaChapters, setChapter, insertManyChapters} from '../infrastructure/chapters';
 
 const setPreviousNextChapters = (a: Chapter, chaps: Chapter[]) => {
   const chapStr = a.chap;
@@ -38,16 +37,12 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
 
   const newChs: Chapter[] = [];
   for (const v of chapsToAdd) {
-    const parse = chapterComSchema.safeParse(v);
-    if (!parse.success) throw new Error('Failed to parse chapter: ' + parse.error);
-    const {data: cha} = parse;
-
-    const newExistingChap = newChs.find((c) => c.chap === cha.chap);
+    const newExistingChap = newChs.find((c) => c.chap === v.chap);
     if (newExistingChap) {
       newExistingChap.versions.push({
-        hid: cha.hid,
-        title: cha.title,
-        translator: cha.group_name.at(0),
+        hid: v.hid,
+        title: v.title,
+        translator: v.group_name.at(0),
         images: [],
       });
       continue;
@@ -58,9 +53,9 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
     );
     if (existingChap) {
       existingChap.versions.push({
-        hid: cha.hid,
-        title: cha.title,
-        translator: cha.group_name.at(0),
+        hid: v.hid,
+        title: v.title,
+        translator: v.group_name.at(0),
         images: [],
       });
       const res = await setChapter(existingChap.comic_id, existingChap.id, existingChap);
@@ -71,14 +66,14 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
 
     newChs.push({
       _id: new ObjectId(),
-      id: cha.id,
-      chap: cha.chap,
+      id: v.id,
+      chap: v.chap,
       comic_id: c.id,
       versions: [
         {
-          hid: cha.hid,
-          title: cha.title,
-          translator: cha.group_name.at(0),
+          hid: v.hid,
+          title: v.title,
+          translator: v.group_name.at(0),
           images: [],
         },
       ],

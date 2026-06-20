@@ -1,6 +1,6 @@
 import type {Request, Response, NextFunction} from 'express';
 import {z} from 'zod';
-import {errorsSchema} from '../../medias/models/schemas/error-schema';
+import {errorsSchema} from '@/core/types/schemas/error-schema';
 
 export function validateData(schema: z.ZodType<any>, field: 'body' | 'query' | 'params') {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -10,11 +10,9 @@ export function validateData(schema: z.ZodType<any>, field: 'body' | 'query' | '
       const parsedError = JSON.parse(parsed.error.message);
       const errors = errorsSchema.parse(parsedError);
 
-      return res
-        .status(400)
-        .json({
-          error: 'Invalid data for ' + field + ': ' + errors.map((v) => v.message).join('; '),
-        });
+      return res.status(400).json({
+        error: 'Invalid data for ' + field + ': ' + errors.map((v) => v.message).join('; '),
+      });
     }
 
     next();

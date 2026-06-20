@@ -1,7 +1,7 @@
-import type {ApiError} from '../../../models/api-error';
-import {getChapterById} from '../../medias/infrastructure/chapters';
+import type {ApiError} from '@/core/types/api-error';
 import {getBookmarkById, updateBookmarkChapterId} from '../infrastructure/bookmark';
 import type {Bookmark} from '../types/domain/bookmark';
+import {getChapterById} from '@/routes/chapters/infrastructure/chapters';
 
 export const modifyBookmarkChapter = async (
   id: string,

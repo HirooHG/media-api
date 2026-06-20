@@ -1,7 +1,7 @@
 import {v4} from 'uuid';
 import {insertBookmark} from '../infrastructure/bookmark';
 import type {Bookmark} from '../types/domain/bookmark';
-import type {ApiError} from '../../../models/api-error';
+import type {ApiError} from '@/core/types/api-error';
 import {ObjectId} from 'mongodb';
 import {getMediaById} from '../../medias/infrastructure/medias';
 

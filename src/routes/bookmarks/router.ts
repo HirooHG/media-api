@@ -2,7 +2,7 @@ import {Router} from 'express';
 import {keycloakConfig} from '../auth/utils/keycloak-config';
 import type {Bookmark} from './types/domain/bookmark';
 import {getAllBookmarks} from './infrastructure/bookmark';
-import {validateData} from '../auth/middlewares/validation';
+import {validateData} from '@/core/middlewares/validation';
 import {bookmarkIdSchema} from './types/schemas/bookmark-id-schema';
 import {modifyBookmarkChapter} from './features/modify-bookmark-chapter';
 import {mediaIdSchema} from './types/schemas/media-id-schema';

@@ -1,10 +1,11 @@
-import {saveImage} from '../../../../infrastructure/minio';
-import type {ApiError} from '../../../../models/api-error';
-import {getComickComicChapterDetails, getComickImage} from '../../application/com/application';
-import {getMediaChapter, setChapter} from '../../infrastructure/chapters';
-import {getMedia} from '../../infrastructure/medias';
-import type {Chapter} from '../../models/domain/chapter';
-import type {ChapterImage} from '../../models/domain/chapter-image';
+import {getComickComicChapterDetails} from '@/application/com/features/get-chapter-details';
+import {getComickImage} from '@/application/com/features/get-comic-image';
+import type {ApiError} from '@/core/types/api-error';
+import {saveImage} from '@/infrastructure/minio';
+import {getMedia} from '@/routes/medias/infrastructure/medias';
+import {getMediaChapter, setChapter} from '../infrastructure/chapters';
+import type {Chapter} from '../types/domain/chapter';
+import type {ChapterImage} from '../types/domain/chapter-image';
 
 export const getComicChapterDetails = async (
   mediaId: number,
@@ -21,7 +22,7 @@ export const getComicChapterDetails = async (
   if (!version) return {error: "Couldn't fetch chapter details", status: 404};
   if (version.images.length !== 0) return chap;
 
-  const chapterDetails = await getComickComicChapterDetails(media.slug, chap, version.hid);
+  const chapterDetails = await getComickComicChapterDetails(media.slug, chap.chap, version.hid);
   if (!chapterDetails) return {error: "Couldn't fetch chapter details", status: 500};
 
   const {chapter} = chapterDetails;

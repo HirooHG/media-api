@@ -1,13 +1,9 @@
 import {WebSocketServer, type RawData} from 'ws';
 import {getTicketById} from '../features/get-ticket-by-id';
 import {deleteTicket} from './tickets';
-import {
-  actionSchema,
-  imagesSchema,
-  limitSchema,
-} from '../../routes/medias/models/schemas/ws-schemas';
-import {loadAllMediaChaptersImages} from '../../routes/medias/features/chapters/load-all-media-chapters-images';
-import {loadAllMediaChapters} from '../../routes/medias/features/chapters/load-all-media-chapters';
+import {actionSchema, imagesSchema, limitSchema} from '../types/schemas/ws-schemas';
+import {loadAllMediaChaptersImages} from '@/routes/chapters/features/load-all-media-chapters-images';
+import {loadAllMediaChapters} from '@/routes/chapters/features/load-all-media-chapters';
 
 const uuidRegex = '([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})';
 const ticketRegex = 'ticket=' + uuidRegex;

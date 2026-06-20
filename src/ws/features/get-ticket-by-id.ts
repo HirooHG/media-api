@@ -1,4 +1,4 @@
-import type {ApiError} from '../../models/api-error';
+import type {ApiError} from '@/core/types/api-error';
 import {findTicket} from '../infrastructure/tickets';
 import type {Ticket} from '../types/ticket';
 

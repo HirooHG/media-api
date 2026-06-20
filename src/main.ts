@@ -8,13 +8,14 @@ import session from 'express-session';
 
 import {initClient, closeClient} from './infrastructure/mongo';
 import {initComAuth} from './routes/apps/features/init-apps-auth';
-import mediasRouter from './routes/medias/router';
+import mediaRouter from './routes/medias/router';
+import chapterRouter from './routes/chapters/router';
 import authRouter from './routes/auth/router';
 import appsRouter from './routes/apps/router';
 import bookmarkRouter from './routes/bookmarks/router';
+import wsRouter from './ws/router';
 import {initMinio} from './infrastructure/minio';
 import {memoryStore, keycloakConfig} from './routes/auth/utils/keycloak-config';
-import wsRouter from './ws/router';
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';
@@ -50,7 +51,8 @@ app.use(express.static('public'));
 app.disable('x-powered-by');
 
 app.use('/auth', authRouter);
-app.use('/media', mediasRouter);
+app.use('/media', mediaRouter);
+app.use('/chapter', chapterRouter);
 app.use('/apps', appsRouter);
 app.use('/wss', wsRouter);
 app.use('/bookmark', bookmarkRouter);

@@ -1,4 +1,4 @@
-import type {ApiError} from '../../../models/api-error';
+import type {ApiError} from '@/core/types/api-error';
 import {deleteBookmark} from '../infrastructure/bookmark';
 
 export const removeBookmark = async (id: string): Promise<{id: string} | ApiError> => {

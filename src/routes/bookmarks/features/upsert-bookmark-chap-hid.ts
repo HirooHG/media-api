@@ -1,10 +1,10 @@
 import {v4} from 'uuid';
 import {getBookmarkByMediaId, updateBookmarkChapterId} from '../infrastructure/bookmark';
 import type {Bookmark} from '../types/domain/bookmark';
-import type {ApiError} from '../../../models/api-error';
+import type {ApiError} from '@/core/types/api-error';
 import {ObjectId} from 'mongodb';
 import {getMediaById} from '../../medias/infrastructure/medias';
-import {getChapterById, getMediaChapter} from '../../medias/infrastructure/chapters';
+import {getChapterById, getMediaChapter} from '@/routes/chapters/infrastructure/chapters';
 
 export const upsertBookmarkChapHid = async (
   mediaId: number,
@@ -19,7 +19,7 @@ export const upsertBookmarkChapHid = async (
     };
 
   const existingBookmark = await getBookmarkByMediaId(mediaId);
-  if (existingBookmark?.chapterId === chapter.id) return existingBookmark;
+  if (existingBookmark && existingBookmark.chapterId === chapter.id) return existingBookmark;
   const existingBookmarkChapter = await getChapterById(existingBookmark?.chapterId ?? 0);
   if (
     existingBookmark &&

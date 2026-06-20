@@ -1,4 +1,4 @@
-import {COM_DOMAIN, COM_IDENTITY, COM_TOKEN} from '../../medias/constants';
+import {COM_DOMAIN, COM_TOKEN, COM_IDENTITY} from '@/core/constants';
 import {getAppAuth, setAppAuth} from '../infrastructure/app-auth';
 import type {AppAuthDto} from '../types/schemas/app-auth-schema';
 

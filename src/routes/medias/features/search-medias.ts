@@ -1,6 +1,6 @@
 import type {Document, Filter} from 'mongodb';
-import {getMediasPaginated} from '../../infrastructure/medias';
-import type {Media} from '../../models/domain/media';
+import {getMediasPaginated} from '../infrastructure/medias';
+import type {Media} from '../models/domain/media';
 
 export const searchMedias = async (filter: string): Promise<Media[]> => {
   const doc: Filter<Document> = {

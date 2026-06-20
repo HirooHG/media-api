@@ -1,11 +1,10 @@
-import {getComickFollows} from '../../application/com/application';
-import {getMedias, insertManyMedias} from '../../infrastructure/medias';
-import type {Media} from '../../models/domain/media';
 import {getAllComics} from './get-all-comics';
 import {ObjectId} from 'mongodb';
-import {mediaComSchema, type MediaComDto} from '../../models/responses/com/media-com-schema';
-import type {GetAllMediasResult} from '../../models/result/get-all-medias-result';
-import type {ApiError} from '../../../../models/api-error';
+import type {ApiError} from '@/core/types/api-error';
+import {getComickFollows} from '@/application/com/features/get-follows';
+import type {GetAllMediasResult} from '../models/result/get-all-medias-result';
+import {getMedias, insertManyMedias} from '../infrastructure/medias';
+import type {Media} from '../models/domain/media';
 
 export const refreshComickFollows = async (
   page: number,
@@ -13,22 +12,13 @@ export const refreshComickFollows = async (
   status: number | null,
 ): Promise<GetAllMediasResult | ApiError> => {
   const [em, m] = await Promise.all([getMedias(), getComickFollows()]);
-
-  const mm = m.map((v) => {
-    const obj = mediaComSchema.safeParse(v);
-
-    if (!obj.success) throw new Error('Error parsing media: ' + obj.error.message);
-
-    return obj.data as MediaComDto;
-  });
-
-  const dtos = mm.filter((me: MediaComDto) => !em.some((eme: Media) => me.comic_id === eme.id));
+  const dtos = m.filter((me) => !em.some((eme: Media) => me.comic_id === eme.id));
 
   if (dtos.length === 0) return await getAllComics(page, per_page, status);
 
   const c = await insertManyMedias(
     dtos.map(
-      (v: MediaComDto) =>
+      (v) =>
         ({
           _id: new ObjectId(),
           id: v.comic_id,

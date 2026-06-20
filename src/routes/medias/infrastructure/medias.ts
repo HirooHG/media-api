@@ -1,6 +1,6 @@
 import type {Document, Filter} from 'mongodb';
 import type {Media} from '../models/domain/media';
-import type {PaginationDto} from '../models/schemas/pagination-schema';
+import type {PaginationDto} from '@/core/types/schemas/pagination-schema';
 import {medias} from '../../../infrastructure/mongo';
 
 export const getCountMedias = async (): Promise<number> => {

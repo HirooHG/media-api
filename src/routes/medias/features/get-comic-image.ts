@@ -1,8 +1,8 @@
-import {saveImage} from '../../../../infrastructure/minio';
-import type {ApiError} from '../../../../models/api-error';
-import {getComickImage} from '../../application/com/application';
-import {getMediaById, setMediaProp} from '../../infrastructure/medias';
-import type {MediaImage} from '../../models/domain/media-image';
+import type {ApiError} from '@/core/types/api-error';
+import {getComickImage} from '@/application/com/features/get-comic-image';
+import {saveImage} from '@/infrastructure/minio';
+import {getMediaById, setMediaProp} from '../infrastructure/medias';
+import type {MediaImage} from '../models/domain/media-image';
 
 export const getComicImage = async (id: number): Promise<MediaImage | ApiError> => {
   const m = await getMediaById(id);

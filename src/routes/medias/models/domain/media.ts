@@ -1,6 +1,6 @@
 import type {Document, WithId} from 'mongodb';
 import type {MediaImage} from './media-image';
-import type {MediaReadingState} from '../responses/com/media-com-schema';
+import type {MediaReadingState} from '@/application/com/types/media-com-schema';
 
 export interface Media extends WithId<Document> {
   // gen
