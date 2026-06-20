@@ -1,17 +1,41 @@
 import type {ApiError} from '../../../../models/api-error';
 import {getComickComicChapters} from '../../application/com/application';
-import {getMediaChapters, insertManyChapters} from '../../infrastructure/chapters';
+import {getMediaChapters, insertManyChapters, setChapter} from '../../infrastructure/chapters';
 import {getMedia} from '../../infrastructure/medias';
 import type {Chapter} from '../../models/domain/chapter';
 import {ObjectId} from 'mongodb';
 import {chapterComSchema} from '../../models/responses/com/chapter-com-schema';
+
+const setPreviousNextChapters = (a: Chapter, chaps: Chapter[]) => {
+  const chapStr = a.chap;
+  if (isNaN(Number(chapStr))) {
+    console.log('[INFO] Not a number: ', chapStr);
+    return;
+  }
+  const chap = parseInt(chapStr);
+
+  a.versions.forEach((v) => {
+    const prev = chaps.find((n) =>
+      !isNaN(Number(n.chap)) ? parseInt(n.chap) === chap - 1 : false,
+    );
+    const next = chaps.find((n) =>
+      !isNaN(Number(n.chap)) ? parseInt(n.chap) === chap + 1 : false,
+    );
+
+    v.prev_chap = prev?.versions.find((n) => n.translator === v.translator)?.hid;
+    v.next_chap = next?.versions.find((n) => n.translator === v.translator)?.hid;
+  });
+};
 
 export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiError> => {
   const c = await getMedia({id});
   if (c === null) return {error: "Couldn't find the media", status: 404};
 
   const [ecs, chs] = await Promise.all([getMediaChapters(c.id), getComickComicChapters(c.slug)]);
-  const chapsToAdd = chs.filter((ch) => !ecs.some((ech) => ech.id === ch.id));
+  const chapsToAdd = chs.filter(
+    (ch) => !ecs.some((ech) => !ech.versions.some((v) => v.hid === ch.hid)),
+  );
+  console.log(chapsToAdd.map((c) => c.hid));
   if (chapsToAdd.length === 0) return ecs;
 
   const newChs: Chapter[] = [];
@@ -20,52 +44,78 @@ export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiE
     if (!parse.success) throw new Error('Failed to parse chapter: ' + parse.error);
     const {data: cha} = parse;
 
-    const existingChap = newChs.find((c) => c.chap === cha.chap);
+    const newExistingChap = newChs.find((c) => c.chap === cha.chap);
+    if (newExistingChap) {
+      console.log('new existing', newExistingChap.id);
+      newExistingChap.versions.push({
+        hid: cha.hid,
+        title: cha.title,
+        translator: cha.group_name.at(0),
+        images: [],
+      });
+      continue;
+    }
 
-    if (!existingChap)
-      newChs.push({
-        _id: new ObjectId(),
-        id: cha.id,
-        chap: cha.chap,
-        comic_id: c.id,
-        versions: [
-          {
-            hid: cha.hid,
-            title: cha.title,
-            translator: cha.group_name.at(0),
-            images: [],
-          },
-        ],
-      } satisfies Chapter);
-    else
+    const existingChap = ecs.find(
+      (c) => c.chap === v.chap && !c.versions.some((v) => v.hid === v.hid),
+    );
+    if (existingChap) {
+      console.log('existing', existingChap.id);
       existingChap.versions.push({
         hid: cha.hid,
         title: cha.title,
         translator: cha.group_name.at(0),
         images: [],
       });
+      const res = await setChapter(existingChap.comic_id, existingChap.id, existingChap);
+
+      if (!res) throw new Error('Failed to set chapter ' + existingChap.id);
+      continue;
+    }
+
+    console.log('new', cha.id);
+    newChs.push({
+      _id: new ObjectId(),
+      id: cha.id,
+      chap: cha.chap,
+      comic_id: c.id,
+      versions: [
+        {
+          hid: cha.hid,
+          title: cha.title,
+          translator: cha.group_name.at(0),
+          images: [],
+        },
+      ],
+    } satisfies Chapter);
   }
 
-  newChs.forEach((a) => {
-    a.versions.forEach((v) => {
-      const prev = newChs.find((n) =>
-        !isNaN(Number(n.chap)) && !isNaN(Number(n.chap))
-          ? parseInt(n.chap) === parseInt(n.chap) - 1
-          : false,
-      );
-      const next = newChs.find((n) =>
-        !isNaN(Number(n.chap)) && !isNaN(Number(n.chap))
-          ? parseInt(n.chap) === parseInt(n.chap) + 1
-          : false,
-      );
+  newChs.forEach((c) => setPreviousNextChapters(c, newChs));
 
-      v.prev_chap = prev?.versions.find((n) => n.translator === v.translator)?.hid;
-      v.next_chap = next?.versions.find((n) => n.translator === v.translator)?.hid;
-    });
-  });
+  const newAddedChap = newChs.find((c) =>
+    !isNaN(Number(c.chap))
+      ? ecs.some((e) =>
+          !isNaN(Number(e.chap)) ? parseInt(c.chap) - 1 === parseInt(e.chap) : false,
+        )
+      : false,
+  );
+  if (newAddedChap) {
+    const lastAddedChap = ecs.find((c) =>
+      !isNaN(Number(c.chap)) ? parseInt(c.chap) === parseInt(newAddedChap.chap) - 1 : false,
+    )!;
 
-  const ak = await insertManyChapters(newChs);
-  if (!ak) return {error: "Couldn't insert media's chapters", status: 500};
+    setPreviousNextChapters(newAddedChap, [lastAddedChap]);
+    setPreviousNextChapters(lastAddedChap, [newAddedChap]);
+
+    const chap = await setChapter(lastAddedChap.comic_id, lastAddedChap.id, lastAddedChap);
+
+    if (!chap) throw new Error('Could not modify chapter: ' + lastAddedChap.id);
+  }
+
+  if (newChs.length > 0) {
+    const ak = await insertManyChapters(newChs);
+    if (!ak) return {error: "Couldn't insert media's chapters", status: 500};
+  }
 
   const chapters = await getMediaChapters(id);
   return chapters;
