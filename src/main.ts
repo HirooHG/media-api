@@ -47,7 +47,6 @@ app.use(
   helmet({crossOriginResourcePolicy: {policy: env === 'production' ? 'same-origin' : 'same-site'}}),
 );
 app.use(cors(corsOpts));
-app.use(express.static('public'));
 app.disable('x-powered-by');
 
 app.use('/auth', authRouter);
