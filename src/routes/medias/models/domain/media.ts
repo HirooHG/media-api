@@ -1,6 +1,5 @@
 import type {Document, WithId} from 'mongodb';
 import type {MediaImage} from './media-image';
-import type {MediaReadingState} from '@/application/com/types/media-com-schema';
 
 export interface Media extends WithId<Document> {
   // gen
@@ -8,7 +7,7 @@ export interface Media extends WithId<Document> {
   title: string;
   slug: string;
   status: number;
-  type: MediaReadingState;
+  readingStatus: string | null;
   default_thumbnail: string;
   // details
   hid?: string;

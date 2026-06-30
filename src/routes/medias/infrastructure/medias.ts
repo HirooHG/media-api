@@ -42,7 +42,11 @@ export const insertManyMedias = async (m: Media[]) => {
   return (await medias.insertMany(m)).insertedCount;
 };
 
-export const setMediaProp = async (id: number, prop: string, data: string | number | object) => {
+export const setMediaProp = async <T>(
+  id: number,
+  prop: keyof T,
+  data: string | number | object,
+) => {
   const obj: Document = {
     [prop]: data,
   };

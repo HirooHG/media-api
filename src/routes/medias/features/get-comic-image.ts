@@ -3,6 +3,7 @@ import {getComickImage} from '@/application/com/features/get-comic-image';
 import {saveImage} from '@/infrastructure/minio';
 import {getMediaById, setMediaProp} from '../infrastructure/medias';
 import type {MediaImage} from '../models/domain/media-image';
+import type {Media} from '../models/domain/media';
 
 export const getComicImage = async (id: number): Promise<MediaImage | ApiError> => {
   const m = await getMediaById(id);
@@ -16,7 +17,7 @@ export const getComicImage = async (id: number): Promise<MediaImage | ApiError> 
     media_id: id,
     uri,
   };
-  const res = await setMediaProp(m.id, 'image', image);
+  const res = await setMediaProp<Media>(m.id, 'image', image);
   if (!res) return {error: "Couldn't persist the media image", status: 500};
 
   return image;

@@ -10,10 +10,12 @@ const db = client.db('media-db');
 
 export const api_auth = db.collection('api-auths');
 export const app_auth = db.collection('app-auths');
+export const tickets = db.collection('tickets');
+
 export const chapters = db.collection('chapters');
 export const medias = db.collection('media');
 export const bookmarks = db.collection('bookmarks');
-export const tickets = db.collection('tickets');
+export const readingStatus = db.collection('readingStatus');
 
 /// Client
 export const initClient = async () => {

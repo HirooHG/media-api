@@ -13,9 +13,11 @@ import chapterRouter from './routes/chapters/router';
 import authRouter from './routes/auth/router';
 import appsRouter from './routes/apps/router';
 import bookmarkRouter from './routes/bookmarks/router';
+import readingStatusRouter from './routes/readingStatus/router';
 import wsRouter from './ws/router';
 import {initMinio} from './infrastructure/minio';
 import {memoryStore, keycloakConfig} from './routes/auth/utils/keycloak-config';
+import {seedData} from './infrastructure/seed-data';
 
 const env = process.env.NODE_ENV ?? 'dev';
 const origin = process.env.ORIGIN ?? '*';
@@ -55,12 +57,13 @@ app.use('/chapter', chapterRouter);
 app.use('/apps', appsRouter);
 app.use('/wss', wsRouter);
 app.use('/bookmark', bookmarkRouter);
+app.use('/readingStatus', readingStatusRouter);
 
 const server = app.listen(port, async () => {
   try {
     await initClient();
     console.log('client initialized');
-    await Promise.all([initComAuth(), initMinio()]);
+    await Promise.all([initComAuth(), initMinio(), seedData()]);
     console.log('minio initialized');
 
     console.log('websocket running on port ' + ws);
