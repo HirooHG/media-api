@@ -61,7 +61,7 @@ router.delete('/:id', validateData(uuidSchema, 'params'), async (req, res) => {
   let data: string | null = null;
   let error: string | null = null;
 
-  const {id} = uuidSchema.parse(req.body);
+  const {id} = uuidSchema.parse(req.params);
 
   try {
     const res = await removeReadingStatus(id);

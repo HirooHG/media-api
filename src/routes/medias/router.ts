@@ -13,10 +13,11 @@ import {getAllComics} from './features/get-all-comics';
 import {getComic} from './features/get-comic';
 import {getComicImage} from './features/get-comic-image';
 import {searchMedias} from './features/search-medias';
-import {uuidSchema} from '@/core/types/schemas/uuid-schema';
 import {readingStatusIdSchema} from './models/schemas/reading-status-id-schema';
 import {mediaIdSchema} from '../bookmarks/types/schemas/media-id-schema';
 import {modifyReadingStatus} from './features/modify-reading-status';
+import {getMediaReadingStatus} from './features/get-media-reading-status';
+import type {ReadingStatus} from '../readingStatus/types/domain/reading-status';
 
 const router = express.Router();
 
@@ -131,6 +132,31 @@ router.post('/search', validateData(filterSchema, 'body'), async (req, res) => {
     console.log(e);
     status = 500;
     error = "Couldn't search medias";
+  }
+
+  res.status(status).send({
+    data,
+    error,
+  });
+});
+
+router.get('/:mediaId/readingStatus', validateData(mediaIdSchema, 'params'), async (req, res) => {
+  let status = 200;
+  let data: ReadingStatus | null = null;
+  let error: string | null = null;
+
+  const {mediaId} = mediaIdSchema.parse(req.params);
+
+  try {
+    const res = await getMediaReadingStatus(mediaId);
+    if (res && 'error' in res) {
+      status = res.status;
+      error = res.error;
+    } else data = res;
+  } catch (e) {
+    console.log(e);
+    status = 500;
+    error = "Couldn't modify reading status of media";
   }
 
   res.status(status).send({

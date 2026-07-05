@@ -16,5 +16,5 @@ export const loadAllMediaChaptersImages = async (mediaId: number) => {
       );
   }
 
-  return `${chapters.length} has been loaded`;
+  return `${chapters.length} chapters have been loaded`;
 };

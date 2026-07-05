@@ -1,5 +1,5 @@
 import {z} from 'zod';
 
 export const readingStatusIdSchema = z.object({
-  readingStatusId: z.string(),
+  readingStatusId: z.uuidv4().nullable(),
 });

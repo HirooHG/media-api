@@ -45,7 +45,7 @@ export const insertManyMedias = async (m: Media[]) => {
 export const setMediaProp = async <T>(
   id: number,
   prop: keyof T,
-  data: string | number | object,
+  data: string | number | object | null,
 ) => {
   const obj: Document = {
     [prop]: data,
