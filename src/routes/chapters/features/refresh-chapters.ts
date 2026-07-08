@@ -25,7 +25,7 @@ const setPreviousNextChapters = (a: Chapter, chaps: Chapter[]) => {
   });
 };
 
-export const refreshComicChapters = async (id: number): Promise<Chapter[] | ApiError> => {
+export const refreshChapters = async (id: number): Promise<Chapter[] | ApiError> => {
   const c = await getMedia({id});
   if (c === null) return {error: "Couldn't find the media", status: 404};
 

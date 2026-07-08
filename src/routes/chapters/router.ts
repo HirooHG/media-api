@@ -1,28 +1,26 @@
 import {Router} from 'express';
 import {keycloakConfig} from '../auth/utils/keycloak-config';
 import {validateData} from '@/core/middlewares/validation';
-import {
-  comicIdValidationSchema,
-  comicIdAndChapterIdValidationSchema,
-} from '../medias/models/schemas/comic-id-validation-schema';
-import {getComicChapterDetails} from './features/get-comic-chapter-details';
-import {getComicChapters} from './features/get-comic-chapters';
-import {refreshComicChapters} from './features/refresh-comic-chapters';
 import type {Chapter} from './types/domain/chapter';
+import {getChapters} from './features/get-chapters';
+import {refreshChapters} from './features/refresh-chapters';
+import {getChapterDetails} from './features/get-chapter-details';
+import {idSchema} from '@/core/types/schemas/id-schema';
+import {mediaIdAndChapterIdValidationSchema} from '../medias/models/schemas/media-id-validation-schema';
 
 const router = Router();
 
 router.use(keycloakConfig.protect());
 
-router.get('/media/:id', validateData(comicIdValidationSchema, 'params'), async (req, res) => {
+router.get('/media/:id', validateData(idSchema, 'params'), async (req, res) => {
   let status = 200;
   let data: Chapter[] | null = null;
   let error: string | null = null;
 
-  const {id} = comicIdValidationSchema.parse(req.params);
+  const {id} = idSchema.parse(req.params);
 
   try {
-    const chapters = await getComicChapters(id);
+    const chapters = await getChapters(id);
     if ('error' in chapters) {
       status = chapters.status;
       error = chapters.error;
@@ -39,47 +37,43 @@ router.get('/media/:id', validateData(comicIdValidationSchema, 'params'), async 
   });
 });
 
-router.post(
-  '/refresh/media/:id',
-  validateData(comicIdValidationSchema, 'params'),
-  async (req, res) => {
-    let status = 200;
-    let data: Chapter[] | null = null;
-    let error: string | null = null;
+router.post('/refresh/media/:id', validateData(idSchema, 'params'), async (req, res) => {
+  let status = 200;
+  let data: Chapter[] | null = null;
+  let error: string | null = null;
 
-    const {id} = comicIdValidationSchema.parse(req.params);
+  const {id} = idSchema.parse(req.params);
 
-    try {
-      const chapters = await refreshComicChapters(id);
-      if ('error' in chapters) {
-        status = chapters.status;
-        error = chapters.error;
-      } else data = chapters;
-    } catch (e) {
-      console.log(e);
-      status = 500;
-      error = "Couldn't load chapters";
-    }
+  try {
+    const chapters = await refreshChapters(id);
+    if ('error' in chapters) {
+      status = chapters.status;
+      error = chapters.error;
+    } else data = chapters;
+  } catch (e) {
+    console.log(e);
+    status = 500;
+    error = "Couldn't load chapters";
+  }
 
-    res.status(status).send({
-      data,
-      error,
-    });
-  },
-);
+  res.status(status).send({
+    data,
+    error,
+  });
+});
 
 router.get(
   '/media/:id/:chapterHid',
-  validateData(comicIdAndChapterIdValidationSchema, 'params'),
+  validateData(mediaIdAndChapterIdValidationSchema, 'params'),
   async (req, res) => {
     let status = 200;
     let data: Chapter | null = null;
     let error: string | null = null;
 
-    const {id, chapterHid} = comicIdAndChapterIdValidationSchema.parse(req.params);
+    const {id, chapterHid} = mediaIdAndChapterIdValidationSchema.parse(req.params);
 
     try {
-      const chapter = await getComicChapterDetails(id, chapterHid);
+      const chapter = await getChapterDetails(id, chapterHid);
       if ('error' in chapter) {
         status = chapter.status;
         error = chapter.error;

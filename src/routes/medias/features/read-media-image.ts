@@ -5,7 +5,7 @@ import {getMediaById, setMediaProp} from '../infrastructure/medias';
 import type {MediaImage} from '../models/domain/media-image';
 import type {Media} from '../models/domain/media';
 
-export const getComicImage = async (id: number): Promise<MediaImage | ApiError> => {
+export const readMediaImage = async (id: number): Promise<MediaImage | ApiError> => {
   const m = await getMediaById(id);
   if (m === null) return {error: 'Media not found', status: 404};
   if (m.image) return m.image;

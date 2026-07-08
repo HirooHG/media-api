@@ -2,7 +2,7 @@ import type {Document, Filter} from 'mongodb';
 import type {GetAllMediasResult} from '../models/result/get-all-medias-result';
 import {getMediasPaginated, getCountMedias} from '../infrastructure/medias';
 
-export const getAllComics = async (
+export const readAllMedias = async (
   page: number,
   per_page: number,
   status: number | null,

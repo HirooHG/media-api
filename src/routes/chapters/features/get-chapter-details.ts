@@ -7,7 +7,7 @@ import {getMediaChapter, setChapter} from '../infrastructure/chapters';
 import type {Chapter} from '../types/domain/chapter';
 import type {ChapterImage} from '../types/domain/chapter-image';
 
-export const getComicChapterDetails = async (
+export const getChapterDetails = async (
   mediaId: number,
   chapterHid: string, // hid
 ): Promise<Chapter | ApiError> => {

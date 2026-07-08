@@ -4,20 +4,20 @@ import type {Media} from './models/domain/media';
 import type {MediaImage} from './models/domain/media-image';
 import {validateData} from '@/core/middlewares/validation';
 import {paginationWithStatusSchema} from '@/core/types/schemas/pagination-schema';
-import {comicIdValidationSchema} from './models/schemas/comic-id-validation-schema';
 import {keycloakConfig} from '../auth/utils/keycloak-config';
 import type {GetAllMediasResult} from './models/result/get-all-medias-result';
 import {filterSchema} from './models/schemas/filter-schema';
 import {refreshComickFollows} from './features/refresh-comick-follows';
-import {getAllComics} from './features/get-all-comics';
-import {getComic} from './features/get-comic';
-import {getComicImage} from './features/get-comic-image';
 import {searchMedias} from './features/search-medias';
 import {readingStatusIdSchema} from './models/schemas/reading-status-id-schema';
 import {mediaIdSchema} from '../bookmarks/types/schemas/media-id-schema';
 import {modifyReadingStatus} from './features/modify-reading-status';
 import {getMediaReadingStatus} from './features/get-media-reading-status';
 import type {ReadingStatus} from '../readingStatus/types/domain/reading-status';
+import {readAllMedias} from './features/read-all-medias';
+import {readMedia} from './features/read-media';
+import {readMediaImage} from './features/read-media-image';
+import {idSchema} from '@/core/types/schemas/id-schema';
 
 const router = express.Router();
 
@@ -31,7 +31,7 @@ router.get('/', validateData(paginationWithStatusSchema, 'query'), async (req, r
   const {page, per_page, status} = paginationWithStatusSchema.parse(req.query);
 
   try {
-    data = await getAllComics(page, per_page, status);
+    data = await readAllMedias(page, per_page, status);
   } catch (e) {
     console.log(e);
     reqStatus = 500;
@@ -44,15 +44,15 @@ router.get('/', validateData(paginationWithStatusSchema, 'query'), async (req, r
   });
 });
 
-router.get('/:id', validateData(comicIdValidationSchema, 'params'), async (req, res) => {
+router.get('/:id', validateData(idSchema, 'params'), async (req, res) => {
   let status = 200;
   let data: Media | null = null;
   let error: string | null = null;
 
-  const {id} = comicIdValidationSchema.parse(req.params);
+  const {id} = idSchema.parse(req.params);
 
   try {
-    const comic = await getComic(id);
+    const comic = await readMedia(id);
     if ('error' in comic) {
       status = comic.status;
       error = comic.error;
@@ -94,15 +94,15 @@ router.post('/refresh', validateData(paginationWithStatusSchema, 'query'), async
   });
 });
 
-router.get('/image/:id', validateData(comicIdValidationSchema, 'params'), async (req, res) => {
+router.get('/image/:id', validateData(idSchema, 'params'), async (req, res) => {
   let status = 200;
   let data: MediaImage | null = null;
   let error: string | null = null;
 
-  const {id} = comicIdValidationSchema.parse(req.params);
+  const {id} = idSchema.parse(req.params);
 
   try {
-    const res = await getComicImage(id);
+    const res = await readMediaImage(id);
     if ('error' in res) {
       error = res.error;
       status = res.status;

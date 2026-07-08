@@ -3,7 +3,7 @@ import {getComickComicDetails} from '@/application/com/features/get-comic-detail
 import {getMedia, setMedia} from '../infrastructure/medias';
 import type {Media} from '../models/domain/media';
 
-export const getComic = async (id: number): Promise<Media | ApiError> => {
+export const readMedia = async (id: number): Promise<Media | ApiError> => {
   const media = await getMedia({id});
   if (media === null) return {error: "Couldn't find the media", status: 404};
   if (media.detailled) return media;
