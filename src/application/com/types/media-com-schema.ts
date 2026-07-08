@@ -26,4 +26,5 @@ export const mediaDetailsComSchema = z.object({
   desc: z.string().optional().nullable(),
 });
 
+export type MediaDetailsComDto = z.infer<typeof mediaDetailsComSchema>;
 export type MediaComDto = z.infer<typeof mediaComSchema>;
