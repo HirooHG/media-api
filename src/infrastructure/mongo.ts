@@ -14,6 +14,7 @@ export const tickets = db.collection('tickets');
 
 export const chapters = db.collection('chapters');
 export const medias = db.collection('media');
+export const mediaHistory = db.collection('mediaHistory');
 export const bookmarks = db.collection('bookmarks');
 export const readingStatus = db.collection('readingStatus');
 

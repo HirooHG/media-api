@@ -18,6 +18,7 @@ import {readAllMedias} from './features/read-all-medias';
 import {readMedia} from './features/read-media';
 import {readMediaImage} from './features/read-media-image';
 import {idSchema} from '@/core/types/schemas/id-schema';
+import {readMediaLastChapter} from './features/read-media-last-chapter';
 
 const router = express.Router();
 
@@ -195,5 +196,30 @@ router.patch(
     });
   },
 );
+
+router.get('/:id/lastChapter', validateData(idSchema, 'params'), async (req, res) => {
+  let status = 200;
+  let data: string | null = null;
+  let error: string | null = null;
+
+  const {id} = idSchema.parse(req.params);
+
+  try {
+    const comic = await readMediaLastChapter(id);
+    if ('error' in comic) {
+      status = comic.status;
+      error = comic.error;
+    } else data = comic.last_chapter;
+  } catch (e) {
+    console.log(e);
+    status = 500;
+    error = "Couldn't load comic " + id;
+  }
+
+  res.status(status).send({
+    data,
+    error,
+  });
+});
 
 export default router;
