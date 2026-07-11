@@ -7,6 +7,9 @@ import {refreshChapters} from './features/refresh-chapters';
 import {getChapterDetails} from './features/get-chapter-details';
 import {idSchema} from '@/core/types/schemas/id-schema';
 import {mediaIdAndChapterIdValidationSchema} from '../medias/models/schemas/media-id-validation-schema';
+import {chapterHidSchema} from '../bookmarks/types/schemas/chapter-id-schema';
+import {patchChapterSchema} from './types/schemas/patch-chapter-schema';
+import {modifyChapter} from './features/modify-chapter';
 
 const router = Router();
 
@@ -82,6 +85,37 @@ router.get(
       console.log(e);
       status = 500;
       error = "Couldn't load chapter";
+    }
+
+    res.status(status).send({
+      data,
+      error,
+    });
+  },
+);
+
+router.patch(
+  '/:chapterHid',
+  validateData(chapterHidSchema, 'params'),
+  validateData(patchChapterSchema, 'body'),
+  async (req, res) => {
+    let status = 200;
+    let data: string | null = null;
+    let error: string | null = null;
+
+    const {chapterHid} = chapterHidSchema.parse(req.params);
+    const dto = patchChapterSchema.parse(req.body);
+
+    try {
+      const res = await modifyChapter(chapterHid, dto);
+      if ('error' in res) {
+        status = res.status;
+        error = res.error;
+      } else data = res.hid;
+    } catch (e) {
+      console.log(e);
+      status = 500;
+      error = "Couldn't load chapters";
     }
 
     res.status(status).send({

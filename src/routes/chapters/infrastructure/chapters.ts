@@ -1,6 +1,7 @@
 import type {Document} from 'mongodb';
 import {chapters} from '../../../infrastructure/mongo';
 import type {Chapter} from '../types/domain/chapter';
+import type {PatchChapterDto} from '../types/schemas/patch-chapter-schema';
 
 export const getMediaChapters = async (media_id: number): Promise<Chapter[]> => {
   return (await chapters.find({comic_id: media_id}).project({_id: 0}).toArray()) as Chapter[];
@@ -16,6 +17,10 @@ export const getMediaChapter = async (
   );
 };
 
+export const getChapterByHid = async (chapterHid: string): Promise<Chapter | null> => {
+  return await chapters.findOne<Chapter>({'versions.hid': chapterHid}, {projection: {_id: 0}});
+};
+
 export const getChapterById = async (id: number) => {
   return (await chapters.findOne({id})) as Chapter | null;
 };
@@ -29,6 +34,10 @@ export const setChapterProp = async (id: number, prop: string, data: object) => 
     [prop]: data,
   };
   return (await chapters.updateOne({id}, {$set: obj})).upsertedCount;
+};
+
+export const setPartialChapter = async (id: number, obj: PatchChapterDto) => {
+  return (await chapters.updateOne({id}, {$set: obj})).modifiedCount;
 };
 
 export const setChapter = async (

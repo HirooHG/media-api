@@ -69,6 +69,7 @@ export const refreshChapters = async (id: number): Promise<Chapter[] | ApiError>
       id: v.id,
       chap: v.chap,
       comic_id: c.id,
+      read: false,
       versions: [
         {
           hid: v.hid,
